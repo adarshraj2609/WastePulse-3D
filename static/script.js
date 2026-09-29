@@ -1,93 +1,74 @@
-const $ = (query) =>
-    document.querySelector(query);
-
+const $ = (query) => document.querySelector(query);
 
 let map = null;
-
 let markersLayer = null;
 
 let globeScene = null;
-
 let globeCamera = null;
-
 let globeRenderer = null;
-
 let globeGroup = null;
-
 let glowPoints = null;
 
-
 const hotspotColors = {
-
     Critical: "#f05e5e",
-
     High: "#ef8641",
-
     Moderate: "#e0b34d",
-
     Low: "#59b874"
-
 };
 
 
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
+/* =====================================
+   START APP
+===================================== */
 
-        $("#year").textContent =
-            new Date().getFullYear();
+document.addEventListener("DOMContentLoaded", () => {
 
+    const year = $("#year");
 
-        // NAVIGATION
-
-        document
-            .querySelectorAll("[data-page]")
-            .forEach(button => {
-
-                button.addEventListener(
-                    "click",
-                    event => {
-
-                        event.preventDefault();
-
-                        showPage(
-                            button.dataset.page
-                        );
-
-                    }
-                );
-
-            });
+    if (year) {
+        year.textContent = new Date().getFullYear();
+    }
 
 
-        setupCursor();
+    document.querySelectorAll("[data-page]").forEach(button => {
 
-        setupTilt();
+        button.addEventListener("click", event => {
 
-        setupModeButton();
+            event.preventDefault();
 
-        setupImagePreview();
+            showPage(button.dataset.page);
 
-        setupGPS();
+        });
 
-        setupReportForm();
-
-        init3DGlobe();
-
-        loadHome();
+    });
 
 
-        if (window.location.hash) {
+    setupCursor();
 
-            showPage(
-                window.location.hash
-                    .replace("#", "")
-            );
+    setupTilt();
 
-        }
+    setupModeButton();
+
+    setupImagePreview();
+
+    setupGPS();
+
+    setupReportForm();
+
+    init3DGlobe();
+
+    loadHome();
+
+
+    if (window.location.hash) {
+
+        showPage(
+            window.location.hash.replace("#", "")
+        );
 
     }
-);
+
+});
 
 
 /* =====================================
@@ -100,9 +81,7 @@ function showPage(pageId) {
         .querySelectorAll(".page")
         .forEach(page => {
 
-            page.classList.remove(
-                "active"
-            );
+            page.classList.remove("active");
 
         });
 
@@ -111,22 +90,21 @@ function showPage(pageId) {
         .querySelectorAll(".nav-link")
         .forEach(link => {
 
-            link.classList.remove(
-                "active"
-            );
+            link.classList.remove("active");
 
         });
 
 
     const page =
-        document.getElementById(
-            pageId
-        ) || $("#home");
+        document.getElementById(pageId) || $("#home");
 
 
-    page.classList.add(
-        "active"
-    );
+    if (!page) {
+        return;
+    }
+
+
+    page.classList.add("active");
 
 
     document
@@ -135,15 +113,12 @@ function showPage(pageId) {
         )
         .forEach(link => {
 
-            link.classList.add(
-                "active"
-            );
+            link.classList.add("active");
 
         });
 
 
-    window.location.hash =
-        page.id;
+    window.location.hash = page.id;
 
 
     if (page.id === "home") {
@@ -173,13 +148,16 @@ function showPage(pageId) {
 
 
 /* =====================================
-   CURSOR
+   CURSOR GLOW
 ===================================== */
 
 function setupCursor() {
 
-    const glow =
-        $(".cursor-glow");
+    const glow = $(".cursor-glow");
+
+    if (!glow) {
+        return;
+    }
 
 
     window.addEventListener(
@@ -187,10 +165,10 @@ function setupCursor() {
         event => {
 
             glow.style.left =
-                event.clientX + "px";
+                `${event.clientX}px`;
 
             glow.style.top =
-                event.clientY + "px";
+                `${event.clientY}px`;
 
         }
     );
@@ -246,8 +224,7 @@ function setupTilt() {
                 "pointerleave",
                 () => {
 
-                    card.style.transform =
-                        "";
+                    card.style.transform = "";
 
                 }
             );
@@ -263,7 +240,14 @@ function setupTilt() {
 
 function setupModeButton() {
 
-    $("#modeBtn").addEventListener(
+    const button = $("#modeBtn");
+
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener(
         "click",
         () => {
 
@@ -272,10 +256,8 @@ function setupModeButton() {
             );
 
 
-            $("#modeBtn").textContent =
-                document.body.classList.contains(
-                    "bright"
-                )
+            button.textContent =
+                document.body.classList.contains("bright")
                     ? "☼"
                     : "✦";
 
@@ -291,7 +273,19 @@ function setupModeButton() {
 
 function setupImagePreview() {
 
-    $("#photoInput").addEventListener(
+    const input = $("#photoInput");
+
+    const image = $("#previewImage");
+
+    const preview = $("#previewBox");
+
+
+    if (!input || !image || !preview) {
+        return;
+    }
+
+
+    input.addEventListener(
         "change",
         event => {
 
@@ -299,22 +293,18 @@ function setupImagePreview() {
                 event.target.files[0];
 
 
-            if (!file) return;
+            if (!file) {
+                return;
+            }
 
 
-            const imageURL =
-                URL.createObjectURL(
-                    file
-                );
+            image.src =
+                URL.createObjectURL(file);
 
 
-            $("#previewImage").src =
-                imageURL;
-
-
-            $("#previewBox")
-                .classList
-                .remove("hidden");
+            preview.classList.remove(
+                "hidden"
+            );
 
         }
     );
@@ -328,18 +318,24 @@ function setupImagePreview() {
 
 function setupGPS() {
 
-    $("#gpsBtn").addEventListener(
+    const button = $("#gpsBtn");
+
+    if (!button) {
+        return;
+    }
+
+
+    button.addEventListener(
         "click",
         () => {
 
             if (!navigator.geolocation) {
 
                 showToast(
-                    "GPS is not supported."
+                    "GPS is not supported in this browser."
                 );
 
                 return;
-
             }
 
 
@@ -348,24 +344,30 @@ function setupGPS() {
                 position => {
 
                     const lat =
-                        position.coords.latitude
-                            .toFixed(6);
+                        position.coords.latitude.toFixed(6);
+
 
                     const lng =
-                        position.coords.longitude
-                            .toFixed(6);
+                        position.coords.longitude.toFixed(6);
 
 
-                    $("#lat").value =
-                        lat;
-
-                    $("#lng").value =
-                        lng;
+                    if ($("#lat")) {
+                        $("#lat").value = lat;
+                    }
 
 
-                    $("#locationText")
-                        .textContent =
-                        `${lat}, ${lng}`;
+                    if ($("#lng")) {
+                        $("#lng").value = lng;
+                    }
+
+
+                    if ($("#locationText")) {
+
+                        $("#locationText")
+                            .textContent =
+                            `${lat}, ${lng}`;
+
+                    }
 
 
                     showToast(
@@ -392,104 +394,134 @@ function setupGPS() {
 
 
 /* =====================================
-   FORM SUBMIT
+   REPORT FORM
 ===================================== */
 
 function setupReportForm() {
 
-    $("#reportForm")
-        .addEventListener(
-            "submit",
-            async event => {
+    const form = $("#reportForm");
 
-                event.preventDefault();
+    if (!form) {
+        return;
+    }
 
 
-                const formData =
-                    new FormData(
-                        event.target
+    form.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+
+            const formData =
+                new FormData(form);
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/reports",
+                        {
+                            method: "POST",
+                            body: formData
+                        }
                     );
 
 
-                try {
-
-                    const response =
-                        await fetch(
-                            "/api/reports",
-                            {
-                                method: "POST",
-                                body: formData
-                            }
-                        );
+                const data =
+                    await response.json();
 
 
-                    const data =
-                        await response.json();
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.detail ||
+                        "Unable to submit report."
+                    );
+
+                }
 
 
-                    if (!response.ok) {
-
-                        throw new Error(
-                            data.detail ||
-                            "Unable to submit report."
-                        );
-
-                    }
-
+                if ($("#reportMessage")) {
 
                     $("#reportMessage")
                         .textContent =
                         data.message;
 
-
-                    showToast(
-                        "Report added."
-                    );
+                }
 
 
-                    event.target.reset();
+                showToast(
+                    `${data.report.id} submitted successfully.`
+                );
 
 
+                form.reset();
+
+
+                if ($("#lat")) {
                     $("#lat").value =
                         "22.5726";
+                }
 
 
+                if ($("#lng")) {
                     $("#lng").value =
                         "88.3639";
+                }
 
+
+                if ($("#locationText")) {
 
                     $("#locationText")
                         .textContent =
                         "Demo coordinates loaded";
 
+                }
+
+
+                if ($("#previewBox")) {
 
                     $("#previewBox")
                         .classList
                         .add("hidden");
 
+                }
 
-                    loadHome();
+
+                await loadHome();
 
 
-                } catch (error) {
+            }
+            catch (error) {
+
+                if ($("#reportMessage")) {
 
                     $("#reportMessage")
                         .textContent =
                         error.message;
 
-
-                    showToast(
-                        error.message
-                    );
-
                 }
 
+
+                showToast(
+                    error.message
+                );
+
             }
-        );
+
+        }
+    );
 
 
-    $("#refreshHotspots")
-        .addEventListener(
+    const refreshButton =
+        $("#refreshHotspots");
+
+
+    if (refreshButton) {
+
+        refreshButton.addEventListener(
             "click",
             () => {
 
@@ -502,29 +534,75 @@ function setupReportForm() {
             }
         );
 
+    }
+
 }
 
 
 /* =====================================
-   API
+   API HELPER
 ===================================== */
 
-async function fetchJSON(url) {
+async function fetchJSON(
+    url,
+    options = {}
+) {
 
     const response =
-        await fetch(url);
-
-
-    if (!response.ok) {
-
-        throw new Error(
-            "API request failed."
+        await fetch(
+            url,
+            options
         );
+
+
+    const contentType =
+        response.headers.get(
+            "content-type"
+        ) || "";
+
+
+    let data;
+
+
+    if (
+        contentType.includes(
+            "application/json"
+        )
+    ) {
+
+        data =
+            await response.json();
+
+    }
+    else {
+
+        data =
+            await response.text();
 
     }
 
 
-    return response.json();
+    if (!response.ok) {
+
+        const message =
+            typeof data === "object" &&
+            data !== null
+
+                ? (
+                    data.detail ||
+                    data.error ||
+                    "API request failed."
+                )
+
+                : "API request failed.";
+
+
+        throw new Error(message);
+
+    }
+
+
+    return data;
 
 }
 
@@ -553,39 +631,60 @@ async function loadHome() {
         ]);
 
 
-        $("#heroTotal")
-            .textContent =
-            reports.length;
+        if ($("#heroTotal")) {
+
+            $("#heroTotal")
+                .textContent =
+                reports.length;
+
+        }
 
 
-        $("#heroActive")
-            .textContent =
-            hotspots.filter(
-                item =>
-                    item.unresolved > 0
-            ).length;
+        if ($("#heroActive")) {
+
+            $("#heroActive")
+                .textContent =
+                hotspots.filter(
+                    item =>
+                        item.unresolved > 0
+                ).length;
+
+        }
 
 
-        $("#heroCritical")
-            .textContent =
-            hotspots.filter(
-                item =>
-                    item.level === "Critical"
-            ).length;
+        if ($("#heroCritical")) {
+
+            $("#heroCritical")
+                .textContent =
+                hotspots.filter(
+                    item =>
+                        item.level === "Critical"
+                ).length;
+
+        }
+
+    }
+    catch (error) {
+
+        console.error(
+            "Home stats error:",
+            error
+        );
 
 
-    } catch {
-
-        $("#heroTotal")
-            .textContent = "—";
-
-
-        $("#heroActive")
-            .textContent = "—";
+        if ($("#heroTotal")) {
+            $("#heroTotal").textContent = "—";
+        }
 
 
-        $("#heroCritical")
-            .textContent = "—";
+        if ($("#heroActive")) {
+            $("#heroActive").textContent = "—";
+        }
+
+
+        if ($("#heroCritical")) {
+            $("#heroCritical").textContent = "—";
+        }
 
     }
 
@@ -593,23 +692,23 @@ async function loadHome() {
 
 
 /* =====================================
-   THREE.JS GLOBE
+   THREE.JS 3D GLOBE
 ===================================== */
 
 function init3DGlobe() {
 
+    const container =
+        $("#globe");
+
+
     if (
-        !window.THREE ||
-        !$("#globe")
+        !container ||
+        !window.THREE
     ) {
 
         return;
 
     }
-
-
-    const container =
-        $("#globe");
 
 
     const width =
@@ -618,6 +717,16 @@ function init3DGlobe() {
 
     const height =
         container.clientHeight;
+
+
+    if (
+        width === 0 ||
+        height === 0
+    ) {
+
+        return;
+
+    }
 
 
     globeScene =
@@ -669,7 +778,7 @@ function init3DGlobe() {
     );
 
 
-    // MAIN GLOBE
+    /* MAIN GLOBE */
 
     const globeGeometry =
         new THREE.SphereGeometry(
@@ -702,7 +811,7 @@ function init3DGlobe() {
         );
 
 
-    // WIREFRAME
+    /* WIREFRAME */
 
     const wire =
         new THREE.LineSegments(
@@ -730,7 +839,7 @@ function init3DGlobe() {
         );
 
 
-    // ATMOSPHERE
+    /* ATMOSPHERE */
 
     const atmosphere =
         new THREE.Mesh(
@@ -756,7 +865,7 @@ function init3DGlobe() {
         );
 
 
-    // LIGHTS
+    /* LIGHTS */
 
     const light1 =
         new THREE.PointLight(
@@ -794,7 +903,7 @@ function init3DGlobe() {
     );
 
 
-    // PARTICLES
+    /* PARTICLES */
 
     const particleCount =
         850;
@@ -908,7 +1017,7 @@ function init3DGlobe() {
     );
 
 
-    // HOTSPOT NODES
+    /* HOTSPOT NODES */
 
     const hotspotCoords = [
 
@@ -985,14 +1094,15 @@ function init3DGlobe() {
 
 
 /* =====================================
-   RESIZE
+   RESIZE GLOBE
 ===================================== */
 
 function resizeGlobe() {
 
     if (
         !globeRenderer ||
-        !globeCamera
+        !globeCamera ||
+        !$("#globe")
     ) {
 
         return;
@@ -1034,7 +1144,9 @@ function animateGlobe() {
     if (
         !globeRenderer ||
         !globeScene ||
-        !globeCamera
+        !globeCamera ||
+        !globeGroup ||
+        !glowPoints
     ) {
 
         return;
@@ -1042,9 +1154,12 @@ function animateGlobe() {
     }
 
 
-    globeGroup.rotation.y += 0.0028;
+    globeGroup.rotation.y +=
+        0.0028;
 
-    glowPoints.rotation.y -= 0.0008;
+
+    glowPoints.rotation.y -=
+        0.0008;
 
 
     globeRenderer.render(
@@ -1056,133 +1171,170 @@ function animateGlobe() {
 
 
 /* =====================================
-   LEAFLET MAP
+   LEAFLET HOTSPOT MAP
 ===================================== */
 
 async function loadMap() {
 
-    const hotspots =
-        await fetchJSON(
-            "/api/hotspots"
-        );
+    const mapElement =
+        $("#leafletMap");
 
 
-    if (!map) {
+    if (
+        !mapElement ||
+        !window.L
+    ) {
 
-        map =
-            L.map(
-                "leafletMap",
-                {
-                    zoomControl: true
-                }
-            )
-            .setView(
-                [
-                    22.5728,
-                    88.3641
-                ],
-                14
-            );
-
-
-        L.tileLayer(
-            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            {
-                attribution:
-                    "&copy; OpenStreetMap contributors"
-            }
-        ).addTo(map);
-
-
-        markersLayer =
-            L.layerGroup()
-                .addTo(map);
+        return;
 
     }
 
 
-    markersLayer.clearLayers();
+    try {
+
+        const hotspots =
+            await fetchJSON(
+                "/api/hotspots"
+            );
 
 
-    hotspots.forEach(
-        hotspot => {
+        if (!map) {
 
-            const marker =
-                L.circleMarker(
-                    [
-                        hotspot.lat,
-                        hotspot.lng
-                    ],
+            map =
+                L.map(
+                    "leafletMap",
                     {
-
-                        radius:
-                            10 +
-                            Math.min(
-                                hotspot.score / 18,
-                                8
-                            ),
-
-                        color: "#dcefe0",
-
-                        weight: 1,
-
-                        fillColor:
-                            hotspotColors[
-                                hotspot.level
-                            ],
-
-                        fillOpacity: 0.85
-
+                        zoomControl: true
                     }
+                )
+                .setView(
+                    [
+                        22.5728,
+                        88.3641
+                    ],
+                    14
                 );
 
 
-            marker.bindPopup(`
-
-                <div
-                    style="
-                        min-width:170px;
-                        font-family:Arial;
-                    "
-                >
-
-                    <strong>
-                        ${hotspot.id}
-                        -
-                        ${hotspot.level}
-                    </strong>
-
-                    <br><br>
-
-                    Reports:
-                    ${hotspot.reports}
-
-                    <br>
-
-                    Unresolved:
-                    ${hotspot.unresolved}
-
-                    <br>
-
-                    Priority:
-                    ${hotspot.score}/100
-
-                </div>
-
-            `);
+            L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+                    attribution:
+                        "&copy; OpenStreetMap contributors"
+                }
+            )
+            .addTo(map);
 
 
-            marker.addTo(
-                markersLayer
-            );
+            markersLayer =
+                L.layerGroup()
+                    .addTo(map);
 
         }
-    );
 
 
-    renderHotspotList(
-        hotspots
-    );
+        markersLayer.clearLayers();
+
+
+        hotspots.forEach(
+            hotspot => {
+
+                const marker =
+                    L.circleMarker(
+                        [
+                            hotspot.lat,
+                            hotspot.lng
+                        ],
+                        {
+
+                            radius:
+                                10 +
+                                Math.min(
+                                    hotspot.score / 18,
+                                    8
+                                ),
+
+                            color:
+                                "#dcefe0",
+
+                            weight: 1,
+
+                            fillColor:
+                                hotspotColors[
+                                    hotspot.level
+                                ] ||
+                                hotspotColors.Low,
+
+                            fillOpacity:
+                                0.85
+
+                        }
+                    );
+
+
+                marker.bindPopup(`
+
+                    <div
+                        style="
+                            min-width:170px;
+                            font-family:Arial,sans-serif;
+                        "
+                    >
+
+                        <strong>
+
+                            ${hotspot.id}
+                            -
+                            ${hotspot.level}
+
+                        </strong>
+
+                        <br><br>
+
+                        Reports:
+                        ${hotspot.reports}
+
+                        <br>
+
+                        Unresolved:
+                        ${hotspot.unresolved}
+
+                        <br>
+
+                        Priority:
+                        ${hotspot.score}/100
+
+                    </div>
+
+                `);
+
+
+                marker.addTo(
+                    markersLayer
+                );
+
+            }
+        );
+
+
+        renderHotspotList(
+            hotspots
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Map error:",
+            error
+        );
+
+
+        showToast(
+            error.message
+        );
+
+    }
 
 }
 
@@ -1195,28 +1347,40 @@ function renderHotspotList(
     hotspots
 ) {
 
+    const list =
+        $("#hotspotList");
+
+
+    if (!list) {
+        return;
+    }
+
+
     const max =
         Math.max(
             ...hotspots.map(
-                item => item.score
+                item =>
+                    item.score
             ),
             1
         );
 
 
-    $("#hotspotList")
-        .innerHTML =
+    list.innerHTML =
         hotspots
             .map(
                 hotspot => `
 
                     <article class="hot-item">
 
-                        <div class="hot-top">
+                        <div
+                            class="hot-top"
+                        >
 
                             <strong>
                                 ${hotspot.id}
                             </strong>
+
 
                             <span
                                 class="
@@ -1224,13 +1388,17 @@ function renderHotspotList(
                                     ${hotspot.level}
                                 "
                             >
+
                                 ${hotspot.level}
+
                             </span>
 
                         </div>
 
 
-                        <div class="meter">
+                        <div
+                            class="meter"
+                        >
 
                             <i
                                 style="
@@ -1247,23 +1415,34 @@ function renderHotspotList(
                         </div>
 
 
-                        <div class="hot-meta">
+                        <div
+                            class="hot-meta"
+                        >
 
                             <span>
+
                                 ${hotspot.reports}
                                 reports
+
                             </span>
+
 
                             <span>
+
                                 ${hotspot.unresolved}
                                 unresolved
+
                             </span>
 
+
                             <b>
+
                                 ${hotspot.score}/100
+
                             </b>
 
                         </div>
+
 
                     </article>
 
@@ -1280,68 +1459,144 @@ function renderHotspotList(
 
 async function loadCommand() {
 
-    const [
-        reports,
-        hotspots
-    ] = await Promise.all([
+    try {
 
-        fetchJSON(
-            "/api/reports"
-        ),
+        const [
+            reports,
+            hotspots
+        ] = await Promise.all([
 
-        fetchJSON(
-            "/api/hotspots"
-        )
+            fetchJSON(
+                "/api/reports"
+            ),
 
-    ]);
+            fetchJSON(
+                "/api/hotspots"
+            )
 
-
-    const active =
-        hotspots.filter(
-            item =>
-                item.unresolved > 0
-        ).length;
+        ]);
 
 
-    const critical =
-        hotspots.filter(
-            item =>
-                item.level === "Critical"
-        ).length;
+        const active =
+            hotspots.filter(
+                item =>
+                    item.unresolved > 0
+            ).length;
 
 
-    const resolved =
-        reports.filter(
-            item =>
-                item.status === "Resolved"
-        ).length;
+        const critical =
+            hotspots.filter(
+                item =>
+                    item.level === "Critical"
+            ).length;
 
 
-    const pending =
-        reports.filter(
-            item =>
-                item.status !== "Resolved"
-        ).length;
+        const resolved =
+            reports.filter(
+                item =>
+                    item.status === "Resolved"
+            ).length;
 
 
-    $("#kpiTotal").textContent =
-        reports.length;
+        const pending =
+            reports.filter(
+                item =>
+                    item.status !== "Resolved"
+            ).length;
 
 
-    $("#kpiActive").textContent =
-        active;
+        if ($("#kpiTotal")) {
+
+            $("#kpiTotal")
+                .textContent =
+                reports.length;
+
+        }
 
 
-    $("#kpiCritical").textContent =
-        critical;
+        if ($("#kpiActive")) {
+
+            $("#kpiActive")
+                .textContent =
+                active;
+
+        }
 
 
-    $("#kpiResolved").textContent =
-        resolved;
+        if ($("#kpiCritical")) {
+
+            $("#kpiCritical")
+                .textContent =
+                critical;
+
+        }
 
 
-    $("#queueCount").textContent =
-        `${pending} pending`;
+        if ($("#kpiResolved")) {
+
+            $("#kpiResolved")
+                .textContent =
+                resolved;
+
+        }
+
+
+        if ($("#queueCount")) {
+
+            $("#queueCount")
+                .textContent =
+                `${pending} pending`;
+
+        }
+
+
+        renderPriorityBars(
+            hotspots
+        );
+
+
+        renderRecentReports(
+            reports
+        );
+
+
+        renderResponseQueue(
+            reports
+        );
+
+    }
+    catch (error) {
+
+        console.error(
+            "Command center error:",
+            error
+        );
+
+
+        showToast(
+            error.message
+        );
+
+    }
+
+}
+
+
+/* =====================================
+   PRIORITY BARS
+===================================== */
+
+function renderPriorityBars(
+    hotspots
+) {
+
+    const container =
+        $("#bars");
+
+
+    if (!container) {
+        return;
+    }
 
 
     const maxScore =
@@ -1354,39 +1609,51 @@ async function loadCommand() {
         );
 
 
-    $("#bars").innerHTML =
+    container.innerHTML =
         hotspots
             .slice(0, 6)
             .map(
                 hotspot => `
 
-                    <div class="bar">
+                    <div
+                        class="bar"
+                    >
 
-                        <div class="bar-top">
+                        <div
+                            class="bar-top"
+                        >
 
                             <span>
+
                                 ${hotspot.id}
                                 -
                                 ${hotspot.level}
+
                             </span>
 
+
                             <b>
+
                                 ${hotspot.score}
+
                             </b>
 
                         </div>
 
 
-                        <div class="track">
+                        <div
+                            class="track"
+                        >
 
                             <div
                                 class="fill"
                                 style="
                                     width:
                                     ${
-                                        hotspot.score /
-                                        maxScore *
-                                        100
+                                        (
+                                            hotspot.score /
+                                            maxScore
+                                        ) * 100
                                     }%
                                 "
                             ></div>
@@ -1399,32 +1666,144 @@ async function loadCommand() {
             )
             .join("");
 
+}
 
-    $("#recent").innerHTML =
+
+/* =====================================
+   RECENT REPORTS
+===================================== */
+
+function renderRecentReports(
+    reports
+) {
+
+    const container =
+        $("#recent");
+
+
+    if (!container) {
+        return;
+    }
+
+
+    container.innerHTML =
         reports
             .slice(0, 7)
             .map(
                 report => `
 
-                    <div class="stream-row">
+                    <div
+                        class="stream-row"
+                    >
 
                         <div>
 
                             <strong>
+
                                 ${report.id}
+
                             </strong>
 
+
                             <small>
+
                                 ${report.waste_type}
                                 •
                                 ${report.severity}
+
                             </small>
 
                         </div>
 
 
-                        <span class="status">
+                        <span
+                            class="status"
+                        >
+
                             ${report.status}
+
+                        </span>
+
+                    </div>
+
+                `
+            )
+            .join("");
+
+}
+
+
+/* =====================================
+   RESPONSE QUEUE
+===================================== */
+
+function renderResponseQueue(
+    reports
+) {
+
+    const container =
+        $("#actions");
+
+
+    if (!container) {
+        return;
+    }
+
+
+    const pendingReports =
+        reports
+            .filter(
+                report =>
+                    report.status !== "Resolved"
+            )
+            .slice(0, 8);
+
+
+    const rows =
+        pendingReports
+            .map(
+                report => `
+
+                    <div
+                        class="action-row"
+                    >
+
+                        <b>
+
+                            ${report.id}
+
+                        </b>
+
+
+                        <span>
+
+                            ${report.waste_type}
+
+                        </span>
+
+
+                        <span>
+
+                            ${report.severity}
+
+                        </span>
+
+
+                        <span>
+
+                            <button
+                                class="resolve-btn"
+                                onclick="
+                                    resolveReport(
+                                        '${report.id}'
+                                    )
+                                "
+                            >
+
+                                Mark Resolved
+
+                            </button>
+
                         </span>
 
                     </div>
@@ -1434,9 +1813,29 @@ async function loadCommand() {
             .join("");
 
 
-    $("#actions").innerHTML = `
+    const emptyMessage =
+        pendingReports.length === 0
 
-        <div class="action-row head">
+            ? `
+
+                <div
+                    class="empty-queue"
+                >
+
+                    ✓ All reports are resolved
+
+                </div>
+
+              `
+
+            : "";
+
+
+    container.innerHTML = `
+
+        <div
+            class="action-row head"
+        >
 
             <span>
                 REPORT
@@ -1457,42 +1856,90 @@ async function loadCommand() {
         </div>
 
 
-        ${
-            reports
-                .filter(
-                    report =>
-                        report.status !== "Resolved"
-                )
-                .slice(0, 8)
-                .map(
-                    report => `
+        ${rows}
 
-                        <div class="action-row">
-
-                            <b>
-                                ${report.id}
-                            </b>
-
-                            <span>
-                                ${report.waste_type}
-                            </span>
-
-                            <span>
-                                ${report.severity}
-                            </span>
-
-                            <span>
-                                ${report.status}
-                            </span>
-
-                        </div>
-
-                    `
-                )
-                .join("")
-        }
+        ${emptyMessage}
 
     `;
+
+}
+
+
+/* =====================================
+   RESOLVE REPORT
+===================================== */
+
+async function resolveReport(
+    reportId
+) {
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "status",
+        "Resolved"
+    );
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/reports/${reportId}`,
+                {
+                    method: "PATCH",
+                    body: formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                data.detail ||
+                "Unable to update report."
+            );
+
+        }
+
+
+        showToast(
+            `${reportId} marked as resolved.`
+        );
+
+
+        await loadCommand();
+
+        await loadHome();
+
+
+        if (map) {
+
+            await loadMap();
+
+        }
+
+    }
+    catch (error) {
+
+        console.error(
+            "Resolve error:",
+            error
+        );
+
+
+        showToast(
+            error.message
+        );
+
+    }
 
 }
 
@@ -1501,10 +1948,17 @@ async function loadCommand() {
    TOAST
 ===================================== */
 
-function showToast(message) {
+function showToast(
+    message
+) {
 
     const toast =
         $("#toast");
+
+
+    if (!toast) {
+        return;
+    }
 
 
     toast.textContent =
@@ -1533,45 +1987,4 @@ function showToast(message) {
             2200
         );
 
-}
-async function resolveReport(reportId) {
-
-    const formData = new FormData();
-
-    formData.append("status", "Resolved");
-
-    try {
-
-        const response = await fetch(
-            `/api/reports/${reportId}`,
-            {
-                method: "PATCH",
-                body: formData
-            }
-        );
-
-        const data = await response.json();
-
-        if (!response.ok) {
-            throw new Error(
-                data.error || "Unable to update report."
-            );
-        }
-
-        showToast(
-            `${reportId} marked as resolved`
-        );
-
-        loadCommand();
-        loadHome();
-
-        if (map) {
-            loadMap();
-        }
-
-    } catch (error) {
-
-        showToast(error.message);
-
-    }
 }

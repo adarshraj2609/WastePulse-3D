@@ -1534,3 +1534,44 @@ function showToast(message) {
         );
 
 }
+async function resolveReport(reportId) {
+
+    const formData = new FormData();
+
+    formData.append("status", "Resolved");
+
+    try {
+
+        const response = await fetch(
+            `/api/reports/${reportId}`,
+            {
+                method: "PATCH",
+                body: formData
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.error || "Unable to update report."
+            );
+        }
+
+        showToast(
+            `${reportId} marked as resolved`
+        );
+
+        loadCommand();
+        loadHome();
+
+        if (map) {
+            loadMap();
+        }
+
+    } catch (error) {
+
+        showToast(error.message);
+
+    }
+}

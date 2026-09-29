@@ -45,7 +45,7 @@
     "lng": 88.3639,
     "waste_type": "Garbage Burning",
     "severity": "Medium",
-    "status": "Pending",
+    "status": "Resolved",
     "created_at": "2026-09-28T20:29:45",
     "image": "WP163774.png"
   },
@@ -65,7 +65,7 @@
     "lng": 88.3642,
     "waste_type": "Plastic",
     "severity": "High",
-    "status": "Pending",
+    "status": "Resolved",
     "created_at": "2026-09-20T18:10:00",
     "image": null
   },

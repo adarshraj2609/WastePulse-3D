@@ -2655,3 +2655,27 @@ footer {
     }
 
 }
+.resolve-btn {
+    border: 1px solid rgba(155, 231, 173, 0.22);
+    background: rgba(155, 231, 173, 0.08);
+    color: #9be7ad;
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.resolve-btn:hover {
+    background: #9be7ad;
+    color: #07150f;
+    transform: translateY(-1px);
+}
+
+.empty-queue {
+    padding: 25px 10px;
+    text-align: center;
+    color: #91b39d;
+    font-size: 11px;
+}

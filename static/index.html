@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        WastePulse — Civic Intelligence
+    </title>
+
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+
+    <link
+        rel="stylesheet"
+        href="/static/style.css"
+    >
+
+</head>
+
+
+<body>
+
+
+    <div class="cursor-glow"></div>
+
+
+    <div id="toast" class="toast"></div>
+
+
+    <!-- ================= HEADER ================= -->
+
+    <header class="topbar">
+
+
+        <a
+            href="#"
+            class="brand"
+            data-page="home"
+        >
+
+            <span class="brand-logo">
+                ⌁
+            </span>
+
+
+            <span>
+
+                <b>
+                    WastePulse
+                </b>
+
+                <small>
+                    CIVIC INTELLIGENCE
+                </small>
+
+            </span>
+
+        </a>
+
+
+        <nav class="nav">
+
+            <button
+                class="nav-link active"
+                data-page="home"
+            >
+                Overview
+            </button>
+
+            <button
+                class="nav-link"
+                data-page="report"
+            >
+                Report
+            </button>
+
+            <button
+                class="nav-link"
+                data-page="hotspots"
+            >
+                Hotspots
+            </button>
+
+            <button
+                class="nav-link"
+                data-page="command"
+            >
+                Command
+            </button>
+
+        </nav>
+
+
+        <div class="top-right">
+
+            <span class="live">
+
+                <i></i>
+
+                LIVE
+
+            </span>
+
+
+            <button
+                id="modeBtn"
+                class="round-btn"
+            >
+                ✦
+            </button>
+
+        </div>
+
+
+    </header>
+
+
+
+    <main>
+
+
+        <!-- ================= HOME ================= -->
+
+        <section
+            id="home"
+            class="page active"
+        >
+
+
+            <div class="hero">
+
+
+                <div class="hero-content">
+
+
+                    <span class="eyebrow">
+
+                        REGIONAL CIVIC OPERATIONS / 03D
+
+                    </span>
+
+
+                    <h1>
+
+                        A city that can
+
+                        <span>
+                            remember.
+                        </span>
+
+                    </h1>
+
+
+                    <p>
+
+                        WastePulse converts scattered waste
+                        complaints into a visual memory of
+                        recurring locations, helping local teams
+                        see where problems persist.
+
+                    </p>
+
+
+                    <div class="hero-actions">
+
+
+                        <button
+                            class="btn primary"
+                            data-page="report"
+                        >
+
+                            Report a hotspot
+
+                            <b>
+                                ↗
+                            </b>
+
+                        </button>
+
+
+                        <button
+                            class="btn ghost"
+                            data-page="hotspots"
+                        >
+
+                            Explore map
+
+                        </button>
+
+
+                    </div>
+
+
+                    <div class="microstats">
+
+
+                        <div>
+
+                            <b id="heroTotal">
+                                --
+                            </b>
+
+                            <span>
+                                reports
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <b id="heroActive">
+                                --
+                            </b>
+
+                            <span>
+                                active zones
+                            </span>
+
+                        </div>
+
+
+                        <div>
+
+                            <b id="heroCritical">
+                                --
+                            </b>
+
+                            <span>
+                                critical
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- ============ 3D VISUAL ============ -->
+
+                <div class="hero-visual">
+
+
+                    <div class="visual-label top-left">
+
+                        CITY / LIVE
+
+                    </div>
+
+
+                    <div class="visual-label bottom-right">
+
+                        HOTSPOT FIELD
+
+                    </div>
+
+
+                    <div id="globe"></div>
+
+
+                    <div class="orbital-ring ring-1"></div>
+
+                    <div class="orbital-ring ring-2"></div>
+
+
+                    <div class="node node-1">
+
+                        <b>
+                            17
+                        </b>
+
+                        <small>
+                            reports
+                        </small>
+
+                    </div>
+
+
+                    <div class="node node-2">
+
+                        <b>
+                            92
+                        </b>
+
+                        <small>
+                            priority
+                        </small>
+
+                    </div>
+
+
+                    <div class="node node-3">
+
+                        <b>
+                            4.2d
+                        </b>
+
+                        <small>
+                            recurrence
+                        </small>
+
+                    </div>
+
+
+                    <div class="health-card glass">
+
+
+                        <div class="health-top">
+
+                            <span>
+                                NETWORK HEALTH
+                            </span>
+
+                            <i>
+                                ●
+                            </i>
+
+                        </div>
+
+
+                        <strong>
+
+                            78
+
+                            <small>
+                                /100
+                            </small>
+
+                        </strong>
+
+
+                        <div class="progress">
+
+                            <i
+                                style="width:78%"
+                            ></i>
+
+                        </div>
+
+
+                        <p>
+
+                            Pattern visibility is increasing
+                            across active reporting zones.
+
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- PROCESS -->
+
+            <div class="heading-row">
+
+
+                <div>
+
+                    <span class="eyebrow">
+                        HOW IT WORKS
+                    </span>
+
+
+                    <h2>
+                        From complaint to pattern.
+                    </h2>
+
+                </div>
+
+
+                <p>
+
+                    No isolated tickets.
+                    Every report contributes
+                    to a spatial story.
+
+                </p>
+
+
+            </div>
+
+
+
+            <div class="process-grid">
+
+
+                <article class="process-card tilt">
+
+                    <span>
+                        01
+                    </span>
+
+                    <strong>
+                        Capture
+                    </strong>
+
+                    <p>
+
+                        Photo, GPS, waste type
+                        and severity enter one
+                        structured record.
+
+                    </p>
+
+                </article>
+
+
+                <article class="process-card tilt">
+
+                    <span>
+                        02
+                    </span>
+
+                    <strong>
+                        Cluster
+                    </strong>
+
+                    <p>
+
+                        Nearby reports are connected
+                        to expose recurring locations.
+
+                    </p>
+
+                </article>
+
+
+                <article class="process-card tilt">
+
+                    <span>
+                        03
+                    </span>
+
+                    <strong>
+                        Prioritize
+                    </strong>
+
+                    <p>
+
+                        Frequency and urgency become
+                        a transparent visual score.
+
+                    </p>
+
+                </article>
+
+
+                <article class="process-card tilt">
+
+                    <span>
+                        04
+                    </span>
+
+                    <strong>
+                        Resolve
+                    </strong>
+
+                    <p>
+
+                        Teams can monitor reports
+                        through the response lifecycle.
+
+                    </p>
+
+                </article>
+
+
+            </div>
+
+
+
+            <div class="idea-banner">
+
+
+                <span class="eyebrow">
+
+                    THE CORE IDEA
+
+                </span>
+
+
+                <h2>
+
+                    Don't just count complaints.
+
+                    <br>
+
+                    <em>
+                        Remember locations.
+                    </em>
+
+                </h2>
+
+
+                <p>
+
+                    WastePulse is designed around recurrence:
+                    when the same place appears again and again,
+                    the system remembers the pattern.
+
+                </p>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ================= REPORT ================= -->
+
+        <section
+            id="report"
+            class="page"
+        >
+
+
+            <div class="heading-row">
+
+                <div>
+
+                    <span class="eyebrow">
+                        CITIZEN INPUT
+                    </span>
+
+                    <h2>
+                        Report a real-world problem.
+                    </h2>
+
+                </div>
+
+
+                <p>
+
+                    One submission becomes one data point
+                    in the regional waste memory.
+
+                </p>
+
+            </div>
+
+
+
+            <div class="report-layout">
+
+
+                <form
+                    id="reportForm"
+                    class="form-card glass"
+                >
+
+
+                    <div class="form-title">
+
+                        <span>
+                            01
+                        </span>
+
+                        <div>
+
+                            <h3>
+                                New report
+                            </h3>
+
+                            <small>
+                                Designed for a quick phone workflow.
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <label class="field">
+
+                        <span>
+                            Waste photo
+                        </span>
+
+
+                        <div class="dropzone">
+
+
+                            <input
+                                id="photoInput"
+                                name="file"
+                                type="file"
+                                accept="image/*"
+                            >
+
+
+                            <div class="upload-icon">
+                                ＋
+                            </div>
+
+
+                            <b>
+                                Drop image here
+                            </b>
+
+
+                            <small>
+                                or click to browse
+                            </small>
+
+
+                            <div
+                                id="previewBox"
+                                class="preview hidden"
+                            >
+
+                                <img
+                                    id="previewImage"
+                                    alt="Preview"
+                                >
+
+                            </div>
+
+
+                        </div>
+
+                    </label>
+
+
+
+                    <div class="two">
+
+
+                        <label class="field">
+
+                            <span>
+                                Waste type
+                            </span>
+
+
+                            <select
+                                name="waste_type"
+                                required
+                            >
+
+                                <option>
+                                    Mixed
+                                </option>
+
+                                <option>
+                                    Plastic
+                                </option>
+
+                                <option>
+                                    Organic
+                                </option>
+
+                                <option>
+                                    Construction
+                                </option>
+
+                                <option>
+                                    Overflowing Bin
+                                </option>
+
+                                <option>
+                                    Garbage Burning
+                                </option>
+
+                            </select>
+
+                        </label>
+
+
+
+                        <label class="field">
+
+                            <span>
+                                Severity
+                            </span>
+
+
+                            <select
+                                name="severity"
+                                required
+                            >
+
+                                <option>
+                                    Low
+                                </option>
+
+                                <option>
+                                    Medium
+                                </option>
+
+                                <option>
+                                    High
+                                </option>
+
+                            </select>
+
+                        </label>
+
+
+                    </div>
+
+
+
+                    <div class="location-card">
+
+
+                        <div>
+
+                            <span class="pin">
+                                ⌖
+                            </span>
+
+
+                            <div>
+
+                                <b>
+                                    Location
+                                </b>
+
+
+                                <small id="locationText">
+
+                                    Demo coordinates loaded
+
+                                </small>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            id="gpsBtn"
+                            type="button"
+                            class="mini"
+                        >
+
+                            Use my GPS
+
+                        </button>
+
+
+                    </div>
+
+
+
+                    <div class="two">
+
+
+                        <label class="field">
+
+                            <span>
+                                Latitude
+                            </span>
+
+
+                            <input
+                                id="lat"
+                                name="lat"
+                                type="number"
+                                step="any"
+                                value="22.5726"
+                                required
+                            >
+
+                        </label>
+
+
+
+                        <label class="field">
+
+                            <span>
+                                Longitude
+                            </span>
+
+
+                            <input
+                                id="lng"
+                                name="lng"
+                                type="number"
+                                step="any"
+                                value="88.3639"
+                                required
+                            >
+
+                        </label>
+
+
+                    </div>
+
+
+
+                    <button
+                        class="btn primary full"
+                        type="submit"
+                    >
+
+                        Submit report
+
+                        <b>
+                            ↗
+                        </b>
+
+                    </button>
+
+
+                    <div
+                        id="reportMessage"
+                        class="report-message"
+                    ></div>
+
+
+                </form>
+
+
+
+                <!-- 3D REPORT VISUAL -->
+
+                <div class="report-visual">
+
+
+                    <div class="scan-card">
+
+
+                        <div class="grid-plane"></div>
+
+                        <div class="scan-circle"></div>
+
+                        <div class="scan-core"></div>
+
+
+                        <div class="scan-copy">
+
+
+                            <span>
+                                LIVE RECORD
+                            </span>
+
+
+                            <b>
+                                WASTE EVENT
+                            </b>
+
+
+                            <small>
+                                Ready for spatial analysis
+                            </small>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="mini-panels">
+
+
+                        <div>
+
+                            <span>
+                                INPUT
+                            </span>
+
+                            <b>
+                                PHOTO + GPS
+                            </b>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                PROCESS
+                            </span>
+
+                            <b>
+                                CLUSTER + SCORE
+                            </b>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                OUTPUT
+                            </span>
+
+                            <b>
+                                HOTSPOT MEMORY
+                            </b>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ================= HOTSPOTS ================= -->
+
+        <section
+            id="hotspots"
+            class="page"
+        >
+
+
+            <div class="heading-row">
+
+
+                <div>
+
+                    <span class="eyebrow">
+                        SPATIAL INTELLIGENCE
+                    </span>
+
+                    <h2>
+                        The city has a memory.
+                    </h2>
+
+                </div>
+
+
+                <p>
+
+                    Click a hotspot to inspect
+                    its report density and
+                    unresolved load.
+
+                </p>
+
+
+            </div>
+
+
+
+            <div class="hot-layout">
+
+
+                <div class="map-card glass">
+
+
+                    <div class="map-head">
+
+
+                        <span>
+
+                            <i class="live-dot"></i>
+
+                            Regional activity map
+
+                        </span>
+
+
+                        <div class="legend">
+
+
+                            <small>
+                                <i class="l"></i>
+                                Low
+                            </small>
+
+                            <small>
+                                <i class="m"></i>
+                                Moderate
+                            </small>
+
+                            <small>
+                                <i class="h"></i>
+                                High
+                            </small>
+
+                            <small>
+                                <i class="c"></i>
+                                Critical
+                            </small>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div id="leafletMap"></div>
+
+
+                </div>
+
+
+
+                <aside class="hot-sidebar glass">
+
+
+                    <div class="side-title">
+
+
+                        <div>
+
+                            <span class="eyebrow">
+                                PRIORITY FEED
+                            </span>
+
+                            <h3>
+                                Recurring zones
+                            </h3>
+
+                        </div>
+
+
+                        <button
+                            id="refreshHotspots"
+                            class="round-btn"
+                        >
+                            ↻
+                        </button>
+
+
+                    </div>
+
+
+                    <div id="hotspotList"></div>
+
+
+                </aside>
+
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- ================= COMMAND ================= -->
+
+        <section
+            id="command"
+            class="page"
+        >
+
+
+            <div class="heading-row">
+
+
+                <div>
+
+                    <span class="eyebrow">
+                        MUNICIPAL OPERATIONS
+                    </span>
+
+                    <h2>
+                        Command center.
+                    </h2>
+
+                </div>
+
+
+                <p>
+
+                    Reports, recurring zones
+                    and response status
+                    in one screen.
+
+                </p>
+
+
+            </div>
+
+
+
+            <div class="kpis">
+
+
+                <div class="kpi tilt">
+
+                    <span>
+                        Total reports
+                    </span>
+
+                    <b id="kpiTotal">
+                        --
+                    </b>
+
+                    <small>
+                        all records
+                    </small>
+
+                </div>
+
+
+                <div class="kpi tilt">
+
+                    <span>
+                        Active zones
+                    </span>
+
+                    <b id="kpiActive">
+                        --
+                    </b>
+
+                    <small>
+                        unresolved locations
+                    </small>
+
+                </div>
+
+
+                <div class="kpi tilt">
+
+                    <span>
+                        Critical zones
+                    </span>
+
+                    <b id="kpiCritical">
+                        --
+                    </b>
+
+                    <small>
+                        priority ≥ 80
+                    </small>
+
+                </div>
+
+
+                <div class="kpi tilt">
+
+                    <span>
+                        Resolved
+                    </span>
+
+                    <b id="kpiResolved">
+                        --
+                    </b>
+
+                    <small>
+                        closed reports
+                    </small>
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="command-grid">
+
+
+                <div class="panel glass">
+
+
+                    <div class="panel-title">
+
+                        <span class="eyebrow">
+                            01 / PRIORITY
+                        </span>
+
+                        <h3>
+                            Hotspot intensity
+                        </h3>
+
+                    </div>
+
+
+                    <div id="bars"></div>
+
+
+                </div>
+
+
+
+                <div class="panel glass">
+
+
+                    <div class="panel-title">
+
+                        <span class="eyebrow">
+                            02 / RECENT
+                        </span>
+
+                        <h3>
+                            Report stream
+                        </h3>
+
+                    </div>
+
+
+                    <div id="recent"></div>
+
+
+                </div>
+
+
+            </div>
+
+
+
+            <div class="panel glass">
+
+
+                <div class="panel-title action-title">
+
+
+                    <div>
+
+                        <span class="eyebrow">
+                            03 / ACTIONS
+                        </span>
+
+                        <h3>
+                            Response queue
+                        </h3>
+
+                    </div>
+
+
+                    <span
+                        id="queueCount"
+                        class="queue"
+                    >
+                        0 pending
+                    </span>
+
+
+                </div>
+
+
+                <div id="actions"></div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <footer>
+
+        <span>
+            WASTEPULSE / CIVIC INTELLIGENCE PROTOTYPE
+        </span>
+
+        <span>
+            Regional civic-tech UI •
+            <b id="year"></b>
+        </span>
+
+    </footer>
+
+
+
+    <!-- THREE.JS -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"
+    ></script>
+
+
+    <!-- LEAFLET -->
+
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    ></script>
+
+
+    <script
+        src="/static/script.js"
+    ></script>
+
+
+</body>
+
+</html>

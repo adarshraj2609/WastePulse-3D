@@ -1,0 +1,132 @@
+[
+  {
+    "id": "WP119714",
+    "lat": 22.5726,
+    "lng": 88.3639,
+    "waste_type": "Mixed",
+    "severity": "Low",
+    "status": "Pending",
+    "created_at": "2026-09-28T20:32:38",
+    "image": null
+  },
+  {
+    "id": "WP190552",
+    "lat": 22.5726,
+    "lng": 88.3639,
+    "waste_type": "Mixed",
+    "severity": "Low",
+    "status": "Pending",
+    "created_at": "2026-09-28T20:32:24",
+    "image": "WP190552.png"
+  },
+  {
+    "id": "WP203230",
+    "lat": 22.5726,
+    "lng": 88.3639,
+    "waste_type": "Mixed",
+    "severity": "Low",
+    "status": "Pending",
+    "created_at": "2026-09-28T20:32:05",
+    "image": null
+  },
+  {
+    "id": "WP299617",
+    "lat": 22.5726,
+    "lng": 88.3639,
+    "waste_type": "Mixed",
+    "severity": "Low",
+    "status": "Pending",
+    "created_at": "2026-09-28T20:31:26",
+    "image": null
+  },
+  {
+    "id": "WP163774",
+    "lat": 22.5726,
+    "lng": 88.3639,
+    "waste_type": "Garbage Burning",
+    "severity": "Medium",
+    "status": "Pending",
+    "created_at": "2026-09-28T20:29:45",
+    "image": "WP163774.png"
+  },
+  {
+    "id": "WP1001",
+    "lat": 22.5726,
+    "lng": 88.3639,
+    "waste_type": "Mixed",
+    "severity": "High",
+    "status": "Resolved",
+    "created_at": "2026-09-18T09:20:00",
+    "image": null
+  },
+  {
+    "id": "WP1002",
+    "lat": 22.5729,
+    "lng": 88.3642,
+    "waste_type": "Plastic",
+    "severity": "High",
+    "status": "Pending",
+    "created_at": "2026-09-20T18:10:00",
+    "image": null
+  },
+  {
+    "id": "WP1003",
+    "lat": 22.573,
+    "lng": 88.364,
+    "waste_type": "Mixed",
+    "severity": "Medium",
+    "status": "Pending",
+    "created_at": "2026-09-22T12:30:00",
+    "image": null
+  },
+  {
+    "id": "WP1004",
+    "lat": 22.5727,
+    "lng": 88.3641,
+    "waste_type": "Organic",
+    "severity": "High",
+    "status": "Assigned",
+    "created_at": "2026-09-24T08:40:00",
+    "image": null
+  },
+  {
+    "id": "WP1005",
+    "lat": 22.5728,
+    "lng": 88.3643,
+    "waste_type": "Mixed",
+    "severity": "High",
+    "status": "Pending",
+    "created_at": "2026-09-26T19:00:00",
+    "image": null
+  },
+  {
+    "id": "WP1006",
+    "lat": 22.5727,
+    "lng": 88.3642,
+    "waste_type": "Construction",
+    "severity": "Medium",
+    "status": "Resolved",
+    "created_at": "2026-09-16T14:00:00",
+    "image": null
+  },
+  {
+    "id": "WP1007",
+    "lat": 22.565,
+    "lng": 88.35,
+    "waste_type": "Plastic",
+    "severity": "Low",
+    "status": "Resolved",
+    "created_at": "2026-09-21T10:00:00",
+    "image": null
+  },
+  {
+    "id": "WP1008",
+    "lat": 22.5652,
+    "lng": 88.3502,
+    "waste_type": "Mixed",
+    "severity": "Medium",
+    "status": "Pending",
+    "created_at": "2026-09-25T16:30:00",
+    "image": null
+  }
+]

@@ -1,110 +1,167 @@
-const $ = (query) => document.querySelector(query);
+const $ = (query) =>
+    document.querySelector(query);
+
 
 let map = null;
+
 let markersLayer = null;
 
 let globeScene = null;
+
 let globeCamera = null;
+
 let globeRenderer = null;
+
 let globeGroup = null;
+
 let glowPoints = null;
 
+let isAdmin = false;
+
+
 const hotspotColors = {
+
     Critical: "#f05e5e",
+
     High: "#ef8641",
+
     Moderate: "#e0b34d",
+
     Low: "#59b874"
+
 };
 
 
-/* =====================================
+/* =====================================================
    START APP
-===================================== */
+===================================================== */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
 
-    const year = $("#year");
+        const year =
+            $("#year");
 
-    if (year) {
-        year.textContent = new Date().getFullYear();
+
+        if (year) {
+
+            year.textContent =
+                new Date().getFullYear();
+
+        }
+
+
+        document
+            .querySelectorAll(
+                "[data-page]"
+            )
+            .forEach(button => {
+
+                button.addEventListener(
+                    "click",
+                    event => {
+
+                        event.preventDefault();
+
+                        showPage(
+                            button.dataset.page
+                        );
+
+                    }
+                );
+
+            });
+
+
+        setupCursor();
+
+        setupTilt();
+
+        setupModeButton();
+
+        setupImagePreview();
+
+        setupGPS();
+
+        setupReportForm();
+
+        setupAdminLogin();
+
+        setupLogout();
+
+        init3DGlobe();
+
+        loadHome();
+
+        checkAdminLogin();
+
     }
+);
 
 
-    document.querySelectorAll("[data-page]").forEach(button => {
-
-        button.addEventListener("click", event => {
-
-            event.preventDefault();
-
-            showPage(button.dataset.page);
-
-        });
-
-    });
-
-
-    setupCursor();
-
-    setupTilt();
-
-    setupModeButton();
-
-    setupImagePreview();
-
-    setupGPS();
-
-    setupReportForm();
-
-    init3DGlobe();
-
-    loadHome();
-
-
-    if (window.location.hash) {
-
-        showPage(
-            window.location.hash.replace("#", "")
-        );
-
-    }
-
-});
-
-
-/* =====================================
+/* =====================================================
    PAGE NAVIGATION
-===================================== */
+===================================================== */
 
-function showPage(pageId) {
+function showPage(
+    pageId
+) {
 
     document
         .querySelectorAll(".page")
         .forEach(page => {
 
-            page.classList.remove("active");
+            page.classList.remove(
+                "active"
+            );
 
         });
 
 
     document
-        .querySelectorAll(".nav-link")
+        .querySelectorAll(
+            ".nav-link"
+        )
         .forEach(link => {
 
-            link.classList.remove("active");
+            link.classList.remove(
+                "active"
+            );
 
         });
 
 
     const page =
-        document.getElementById(pageId) || $("#home");
+        document.getElementById(
+            pageId
+        ) || $("#home");
 
 
     if (!page) {
+
         return;
+
     }
 
 
-    page.classList.add("active");
+    if (
+        page.id === "command"
+        && !isAdmin
+    ) {
+
+        showToast(
+            "Admin login required."
+        );
+
+        return;
+
+    }
+
+
+    page.classList.add(
+        "active"
+    );
 
 
     document
@@ -113,22 +170,29 @@ function showPage(pageId) {
         )
         .forEach(link => {
 
-            link.classList.add("active");
+            link.classList.add(
+                "active"
+            );
 
         });
 
 
-    window.location.hash = page.id;
+    window.location.hash =
+        page.id;
 
 
-    if (page.id === "home") {
+    if (
+        page.id === "home"
+    ) {
 
         loadHome();
 
     }
 
 
-    if (page.id === "hotspots") {
+    if (
+        page.id === "hotspots"
+    ) {
 
         setTimeout(
             loadMap,
@@ -138,7 +202,10 @@ function showPage(pageId) {
     }
 
 
-    if (page.id === "command") {
+    if (
+        page.id === "command"
+        && isAdmin
+    ) {
 
         loadCommand();
 
@@ -147,16 +214,20 @@ function showPage(pageId) {
 }
 
 
-/* =====================================
-   CURSOR GLOW
-===================================== */
+/* =====================================================
+   CURSOR
+===================================================== */
 
 function setupCursor() {
 
-    const glow = $(".cursor-glow");
+    const glow =
+        $(".cursor-glow");
+
 
     if (!glow) {
+
         return;
+
     }
 
 
@@ -167,6 +238,7 @@ function setupCursor() {
             glow.style.left =
                 `${event.clientX}px`;
 
+
             glow.style.top =
                 `${event.clientY}px`;
 
@@ -176,15 +248,18 @@ function setupCursor() {
 }
 
 
-/* =====================================
-   3D CARD TILT
-===================================== */
+/* =====================================================
+   TILT
+===================================================== */
 
 function setupTilt() {
 
     document
-        .querySelectorAll(".tilt")
+        .querySelectorAll(
+            ".tilt"
+        )
         .forEach(card => {
+
 
             card.addEventListener(
                 "pointermove",
@@ -196,7 +271,10 @@ function setupTilt() {
 
                     const x =
                         (
-                            (event.clientX - rect.left)
+                            (
+                                event.clientX -
+                                rect.left
+                            )
                             / rect.width
                             - 0.5
                         ) * 10;
@@ -204,7 +282,10 @@ function setupTilt() {
 
                     const y =
                         (
-                            (event.clientY - rect.top)
+                            (
+                                event.clientY -
+                                rect.top
+                            )
                             / rect.height
                             - 0.5
                         ) * -10;
@@ -224,7 +305,8 @@ function setupTilt() {
                 "pointerleave",
                 () => {
 
-                    card.style.transform = "";
+                    card.style.transform =
+                        "";
 
                 }
             );
@@ -234,16 +316,20 @@ function setupTilt() {
 }
 
 
-/* =====================================
-   MODE BUTTON
-===================================== */
+/* =====================================================
+   MODE
+===================================================== */
 
 function setupModeButton() {
 
-    const button = $("#modeBtn");
+    const button =
+        $("#modeBtn");
+
 
     if (!button) {
+
         return;
+
     }
 
 
@@ -257,7 +343,9 @@ function setupModeButton() {
 
 
             button.textContent =
-                document.body.classList.contains("bright")
+                document.body.classList.contains(
+                    "bright"
+                )
                     ? "☼"
                     : "✦";
 
@@ -267,21 +355,32 @@ function setupModeButton() {
 }
 
 
-/* =====================================
+/* =====================================================
    IMAGE PREVIEW
-===================================== */
+===================================================== */
 
 function setupImagePreview() {
 
-    const input = $("#photoInput");
-
-    const image = $("#previewImage");
-
-    const preview = $("#previewBox");
+    const input =
+        $("#photoInput");
 
 
-    if (!input || !image || !preview) {
+    const image =
+        $("#previewImage");
+
+
+    const preview =
+        $("#previewBox");
+
+
+    if (
+        !input ||
+        !image ||
+        !preview
+    ) {
+
         return;
+
     }
 
 
@@ -294,12 +393,16 @@ function setupImagePreview() {
 
 
             if (!file) {
+
                 return;
+
             }
 
 
             image.src =
-                URL.createObjectURL(file);
+                URL.createObjectURL(
+                    file
+                );
 
 
             preview.classList.remove(
@@ -312,16 +415,20 @@ function setupImagePreview() {
 }
 
 
-/* =====================================
+/* =====================================================
    GPS
-===================================== */
+===================================================== */
 
 function setupGPS() {
 
-    const button = $("#gpsBtn");
+    const button =
+        $("#gpsBtn");
+
 
     if (!button) {
+
         return;
+
     }
 
 
@@ -329,13 +436,17 @@ function setupGPS() {
         "click",
         () => {
 
-            if (!navigator.geolocation) {
+
+            if (
+                !navigator.geolocation
+            ) {
 
                 showToast(
-                    "GPS is not supported in this browser."
+                    "GPS is not supported."
                 );
 
                 return;
+
             }
 
 
@@ -344,24 +455,34 @@ function setupGPS() {
                 position => {
 
                     const lat =
-                        position.coords.latitude.toFixed(6);
+                        position.coords.latitude
+                            .toFixed(6);
 
 
                     const lng =
-                        position.coords.longitude.toFixed(6);
+                        position.coords.longitude
+                            .toFixed(6);
 
 
                     if ($("#lat")) {
-                        $("#lat").value = lat;
+
+                        $("#lat").value =
+                            lat;
+
                     }
 
 
                     if ($("#lng")) {
-                        $("#lng").value = lng;
+
+                        $("#lng").value =
+                            lng;
+
                     }
 
 
-                    if ($("#locationText")) {
+                    if (
+                        $("#locationText")
+                    ) {
 
                         $("#locationText")
                             .textContent =
@@ -393,16 +514,20 @@ function setupGPS() {
 }
 
 
-/* =====================================
+/* =====================================================
    REPORT FORM
-===================================== */
+===================================================== */
 
 function setupReportForm() {
 
-    const form = $("#reportForm");
+    const form =
+        $("#reportForm");
+
 
     if (!form) {
+
         return;
+
     }
 
 
@@ -413,18 +538,21 @@ function setupReportForm() {
             event.preventDefault();
 
 
-            const formData =
-                new FormData(form);
-
-
             try {
 
                 const response =
                     await fetch(
                         "/api/reports",
                         {
-                            method: "POST",
-                            body: formData
+
+                            method:
+                                "POST",
+
+                            body:
+                                new FormData(
+                                    form
+                                )
+
                         }
                     );
 
@@ -443,7 +571,9 @@ function setupReportForm() {
                 }
 
 
-                if ($("#reportMessage")) {
+                if (
+                    $("#reportMessage")
+                ) {
 
                     $("#reportMessage")
                         .textContent =
@@ -461,18 +591,24 @@ function setupReportForm() {
 
 
                 if ($("#lat")) {
+
                     $("#lat").value =
                         "22.5726";
+
                 }
 
 
                 if ($("#lng")) {
+
                     $("#lng").value =
                         "88.3639";
+
                 }
 
 
-                if ($("#locationText")) {
+                if (
+                    $("#locationText")
+                ) {
 
                     $("#locationText")
                         .textContent =
@@ -481,7 +617,9 @@ function setupReportForm() {
                 }
 
 
-                if ($("#previewBox")) {
+                if (
+                    $("#previewBox")
+                ) {
 
                     $("#previewBox")
                         .classList
@@ -492,11 +630,18 @@ function setupReportForm() {
 
                 await loadHome();
 
-
             }
             catch (error) {
 
-                if ($("#reportMessage")) {
+                console.error(
+                    "Report error:",
+                    error
+                );
+
+
+                if (
+                    $("#reportMessage")
+                ) {
 
                     $("#reportMessage")
                         .textContent =
@@ -515,13 +660,13 @@ function setupReportForm() {
     );
 
 
-    const refreshButton =
+    const refresh =
         $("#refreshHotspots");
 
 
-    if (refreshButton) {
+    if (refresh) {
 
-        refreshButton.addEventListener(
+        refresh.addEventListener(
             "click",
             () => {
 
@@ -539,9 +684,9 @@ function setupReportForm() {
 }
 
 
-/* =====================================
+/* =====================================================
    API HELPER
-===================================== */
+===================================================== */
 
 async function fetchJSON(
     url,
@@ -561,43 +706,39 @@ async function fetchJSON(
         ) || "";
 
 
-    let data;
-
-
-    if (
+    const data =
         contentType.includes(
             "application/json"
         )
-    ) {
 
-        data =
-            await response.json();
+            ? await response.json()
 
-    }
-    else {
-
-        data =
-            await response.text();
-
-    }
+            : await response.text();
 
 
     if (!response.ok) {
 
-        const message =
-            typeof data === "object" &&
-            data !== null
-
-                ? (
-                    data.detail ||
-                    data.error ||
-                    "API request failed."
-                )
-
-                : "API request failed.";
+        let message =
+            "API request failed.";
 
 
-        throw new Error(message);
+        if (
+            typeof data ===
+                "object"
+            && data !== null
+        ) {
+
+            message =
+                data.detail ||
+                data.error ||
+                message;
+
+        }
+
+
+        throw new Error(
+            message
+        );
 
     }
 
@@ -607,59 +748,49 @@ async function fetchJSON(
 }
 
 
-/* =====================================
-   HOME STATS
-===================================== */
+/* =====================================================
+   HOME
+===================================================== */
 
 async function loadHome() {
 
     try {
 
-        const [
-            reports,
-            hotspots
-        ] = await Promise.all([
-
-            fetchJSON(
-                "/api/reports"
-            ),
-
-            fetchJSON(
-                "/api/hotspots"
-            )
-
-        ]);
+        const stats =
+            await fetchJSON(
+                "/api/public/stats"
+            );
 
 
-        if ($("#heroTotal")) {
+        if (
+            $("#heroTotal")
+        ) {
 
             $("#heroTotal")
                 .textContent =
-                reports.length;
+                stats.total_reports;
 
         }
 
 
-        if ($("#heroActive")) {
+        if (
+            $("#heroActive")
+        ) {
 
             $("#heroActive")
                 .textContent =
-                hotspots.filter(
-                    item =>
-                        item.unresolved > 0
-                ).length;
+                stats.active_zones;
 
         }
 
 
-        if ($("#heroCritical")) {
+        if (
+            $("#heroCritical")
+        ) {
 
             $("#heroCritical")
                 .textContent =
-                hotspots.filter(
-                    item =>
-                        item.level === "Critical"
-                ).length;
+                stats.critical_zones;
 
         }
 
@@ -667,33 +798,18 @@ async function loadHome() {
     catch (error) {
 
         console.error(
-            "Home stats error:",
+            "Home error:",
             error
         );
-
-
-        if ($("#heroTotal")) {
-            $("#heroTotal").textContent = "—";
-        }
-
-
-        if ($("#heroActive")) {
-            $("#heroActive").textContent = "—";
-        }
-
-
-        if ($("#heroCritical")) {
-            $("#heroCritical").textContent = "—";
-        }
 
     }
 
 }
 
 
-/* =====================================
-   THREE.JS 3D GLOBE
-===================================== */
+/* =====================================================
+   THREE.JS GLOBE
+===================================================== */
 
 function init3DGlobe() {
 
@@ -720,8 +836,8 @@ function init3DGlobe() {
 
 
     if (
-        width === 0 ||
-        height === 0
+        !width ||
+        !height
     ) {
 
         return;
@@ -735,10 +851,15 @@ function init3DGlobe() {
 
     globeCamera =
         new THREE.PerspectiveCamera(
+
             42,
+
             width / height,
+
             0.1,
+
             100
+
         );
 
 
@@ -748,16 +869,23 @@ function init3DGlobe() {
 
     globeRenderer =
         new THREE.WebGLRenderer({
-            antialias: true,
-            alpha: true
+
+            antialias:
+                true,
+
+            alpha:
+                true
+
         });
 
 
     globeRenderer.setPixelRatio(
+
         Math.min(
             window.devicePixelRatio,
             2
         )
+
     );
 
 
@@ -778,40 +906,36 @@ function init3DGlobe() {
     );
 
 
-    /* MAIN GLOBE */
-
-    const globeGeometry =
-        new THREE.SphereGeometry(
-            1.05,
-            64,
-            64
-        );
-
-
-    const globeMaterial =
-        new THREE.MeshPhongMaterial({
-
-            color: 0x163e2b,
-
-            emissive: 0x062012,
-
-            shininess: 80,
-
-            transparent: true,
-
-            opacity: 0.9
-
-        });
-
-
     const globe =
         new THREE.Mesh(
-            globeGeometry,
-            globeMaterial
+
+            new THREE.SphereGeometry(
+                1.05,
+                64,
+                64
+            ),
+
+            new THREE.MeshPhongMaterial({
+
+                color:
+                    0x163e2b,
+
+                emissive:
+                    0x062012,
+
+                shininess:
+                    80,
+
+                transparent:
+                    true,
+
+                opacity:
+                    0.9
+
+            })
+
         );
 
-
-    /* WIREFRAME */
 
     const wire =
         new THREE.LineSegments(
@@ -828,18 +952,19 @@ function init3DGlobe() {
 
             new THREE.LineBasicMaterial({
 
-                color: 0x6bdc8a,
+                color:
+                    0x6bdc8a,
 
-                transparent: true,
+                transparent:
+                    true,
 
-                opacity: 0.10
+                opacity:
+                    0.10
 
             })
 
         );
 
-
-    /* ATMOSPHERE */
 
     const atmosphere =
         new THREE.Mesh(
@@ -852,20 +977,22 @@ function init3DGlobe() {
 
             new THREE.MeshBasicMaterial({
 
-                color: 0x77e994,
+                color:
+                    0x77e994,
 
-                transparent: true,
+                transparent:
+                    true,
 
-                opacity: 0.045,
+                opacity:
+                    0.045,
 
-                side: THREE.BackSide
+                side:
+                    THREE.BackSide
 
             })
 
         );
 
-
-    /* LIGHTS */
 
     const light1 =
         new THREE.PointLight(
@@ -902,8 +1029,6 @@ function init3DGlobe() {
         light2
     );
 
-
-    /* PARTICLES */
 
     const particleCount =
         850;
@@ -971,32 +1096,42 @@ function init3DGlobe() {
 
 
     particleGeometry.setAttribute(
+
         "position",
+
         new THREE.BufferAttribute(
             positions,
             3
         )
+
     );
 
 
     const particleMaterial =
         new THREE.PointsMaterial({
 
-            color: 0x9be7ad,
+            color:
+                0x9be7ad,
 
-            size: 0.012,
+            size:
+                0.012,
 
-            transparent: true,
+            transparent:
+                true,
 
-            opacity: 0.55
+            opacity:
+                0.55
 
         });
 
 
     glowPoints =
         new THREE.Points(
+
             particleGeometry,
+
             particleMaterial
+
         );
 
 
@@ -1016,8 +1151,6 @@ function init3DGlobe() {
         globeGroup
     );
 
-
-    /* HOTSPOT NODES */
 
     const hotspotCoords = [
 
@@ -1061,16 +1194,21 @@ function init3DGlobe() {
                     ),
 
                     new THREE.MeshBasicMaterial({
-                        color: 0xd7ff9b
+
+                        color:
+                            0xd7ff9b
+
                     })
 
                 );
 
 
             marker.position.set(
+
                 point.x,
                 point.y,
                 point.z
+
             );
 
 
@@ -1093,9 +1231,9 @@ function init3DGlobe() {
 }
 
 
-/* =====================================
+/* =====================================================
    RESIZE GLOBE
-===================================== */
+===================================================== */
 
 function resizeGlobe() {
 
@@ -1123,16 +1261,19 @@ function resizeGlobe() {
 
 
     globeRenderer.setSize(
+
         container.clientWidth,
+
         container.clientHeight
+
     );
 
 }
 
 
-/* =====================================
+/* =====================================================
    GLOBE ANIMATION
-===================================== */
+===================================================== */
 
 function animateGlobe() {
 
@@ -1163,16 +1304,19 @@ function animateGlobe() {
 
 
     globeRenderer.render(
+
         globeScene,
+
         globeCamera
+
     );
 
 }
 
 
-/* =====================================
-   LEAFLET HOTSPOT MAP
-===================================== */
+/* =====================================================
+   MAP
+===================================================== */
 
 async function loadMap() {
 
@@ -1194,7 +1338,7 @@ async function loadMap() {
 
         const hotspots =
             await fetchJSON(
-                "/api/hotspots"
+                "/api/public/hotspots"
             );
 
 
@@ -1204,26 +1348,34 @@ async function loadMap() {
                 L.map(
                     "leafletMap",
                     {
-                        zoomControl: true
+                        zoomControl:
+                            true
                     }
                 )
                 .setView(
+
                     [
                         22.5728,
                         88.3641
                     ],
+
                     14
+
                 );
 
 
             L.tileLayer(
+
                 "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+
                 {
+
                     attribution:
                         "&copy; OpenStreetMap contributors"
+
                 }
-            )
-            .addTo(map);
+
+            ).addTo(map);
 
 
             markersLayer =
@@ -1241,10 +1393,12 @@ async function loadMap() {
 
                 const marker =
                     L.circleMarker(
+
                         [
                             hotspot.lat,
                             hotspot.lng
                         ],
+
                         {
 
                             radius:
@@ -1257,7 +1411,8 @@ async function loadMap() {
                             color:
                                 "#dcefe0",
 
-                            weight: 1,
+                            weight:
+                                1,
 
                             fillColor:
                                 hotspotColors[
@@ -1269,6 +1424,7 @@ async function loadMap() {
                                 0.85
 
                         }
+
                     );
 
 
@@ -1339,9 +1495,9 @@ async function loadMap() {
 }
 
 
-/* =====================================
+/* =====================================================
    HOTSPOT LIST
-===================================== */
+===================================================== */
 
 function renderHotspotList(
     hotspots
@@ -1352,33 +1508,45 @@ function renderHotspotList(
 
 
     if (!list) {
+
         return;
+
     }
 
 
     const max =
         Math.max(
+
             ...hotspots.map(
                 item =>
                     item.score
             ),
+
             1
+
         );
 
 
     list.innerHTML =
+
         hotspots
+
             .map(
+
                 hotspot => `
 
-                    <article class="hot-item">
+                    <article
+                        class="hot-item"
+                    >
 
                         <div
                             class="hot-top"
                         >
 
                             <strong>
+
                                 ${hotspot.id}
+
                             </strong>
 
 
@@ -1443,21 +1611,400 @@ function renderHotspotList(
 
                         </div>
 
-
                     </article>
 
                 `
+
             )
+
             .join("");
 
 }
 
 
-/* =====================================
+/* =====================================================
+   ADMIN LOGIN
+===================================================== */
+
+function setupAdminLogin() {
+
+    const loginButton =
+        $("#adminLoginBtn");
+
+
+    const modal =
+        $("#adminModal");
+
+
+    const closeButton =
+        $("#closeAdmin");
+
+
+    const form =
+        $("#adminLoginForm");
+
+
+    if (
+        !loginButton ||
+        !modal ||
+        !form
+    ) {
+
+        return;
+
+    }
+
+
+    loginButton.addEventListener(
+        "click",
+        () => {
+
+            modal.classList.remove(
+                "hidden"
+            );
+
+        }
+    );
+
+
+    if (closeButton) {
+
+        closeButton.addEventListener(
+            "click",
+            () => {
+
+                modal.classList.add(
+                    "hidden"
+                );
+
+            }
+        );
+
+    }
+
+
+    modal.addEventListener(
+        "click",
+        event => {
+
+            if (
+                event.target === modal
+            ) {
+
+                modal.classList.add(
+                    "hidden"
+                );
+
+            }
+
+        }
+    );
+
+
+    form.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+
+            const formData =
+                new FormData();
+
+
+            formData.append(
+
+                "username",
+
+                $("#adminUsername")
+                    .value
+                    .trim()
+
+            );
+
+
+            formData.append(
+
+                "password",
+
+                $("#adminPassword")
+                    .value
+
+            );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/admin/login",
+                        {
+
+                            method:
+                                "POST",
+
+                            body:
+                                formData
+
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+
+                        data.detail ||
+                        "Login failed."
+
+                    );
+
+                }
+
+
+                isAdmin =
+                    true;
+
+
+                modal.classList.add(
+                    "hidden"
+                );
+
+
+                form.reset();
+
+
+                updateAdminUI();
+
+
+                showToast(
+                    "Admin login successful."
+                );
+
+
+                showPage(
+                    "command"
+                );
+
+            }
+            catch (error) {
+
+                if (
+                    $("#adminLoginMessage")
+                ) {
+
+                    $("#adminLoginMessage")
+                        .textContent =
+                        error.message;
+
+                }
+
+
+                showToast(
+                    error.message
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
+   SESSION CHECK
+===================================================== */
+
+async function checkAdminLogin() {
+
+    try {
+
+        const data =
+            await fetchJSON(
+                "/api/admin/me"
+            );
+
+
+        isAdmin =
+            data.authenticated === true;
+
+
+        updateAdminUI();
+
+    }
+    catch {
+
+        isAdmin =
+            false;
+
+
+        updateAdminUI();
+
+    }
+
+}
+
+
+/* =====================================================
+   UPDATE ADMIN UI
+===================================================== */
+
+function updateAdminUI() {
+
+    const loginButton =
+        $("#adminLoginBtn");
+
+
+    const adminBar =
+        $("#adminUserBar");
+
+
+    const command =
+        $("#commandNav");
+
+
+    if (isAdmin) {
+
+
+        if (loginButton) {
+
+            loginButton.style.display =
+                "none";
+
+        }
+
+
+        if (adminBar) {
+
+            adminBar.style.display =
+                "flex";
+
+        }
+
+
+        if (command) {
+
+            command.style.display =
+                "block";
+
+        }
+
+    }
+    else {
+
+
+        if (loginButton) {
+
+            loginButton.style.display =
+                "block";
+
+        }
+
+
+        if (adminBar) {
+
+            adminBar.style.display =
+                "none";
+
+        }
+
+
+        if (command) {
+
+            command.style.display =
+                "none";
+
+        }
+
+    }
+
+}
+
+
+/* =====================================================
+   LOGOUT
+===================================================== */
+
+function setupLogout() {
+
+    const logoutButton =
+        $("#logoutBtn");
+
+
+    if (!logoutButton) {
+
+        return;
+
+    }
+
+
+    logoutButton.addEventListener(
+        "click",
+        async () => {
+
+            try {
+
+                await fetch(
+                    "/api/admin/logout",
+                    {
+                        method:
+                            "POST"
+                    }
+                );
+
+
+                isAdmin =
+                    false;
+
+
+                updateAdminUI();
+
+
+                showToast(
+                    "Admin logged out."
+                );
+
+
+                showPage(
+                    "home"
+                );
+
+            }
+            catch {
+
+                showToast(
+                    "Logout failed."
+                );
+
+            }
+
+        }
+    );
+
+}
+
+
+/* =====================================================
    COMMAND CENTER
-===================================== */
+===================================================== */
 
 async function loadCommand() {
+
+    if (!isAdmin) {
+
+        showToast(
+            "Admin access required."
+        );
+
+        return;
+
+    }
+
 
     try {
 
@@ -1467,11 +2014,11 @@ async function loadCommand() {
         ] = await Promise.all([
 
             fetchJSON(
-                "/api/reports"
+                "/api/admin/reports"
             ),
 
             fetchJSON(
-                "/api/hotspots"
+                "/api/admin/hotspots"
             )
 
         ]);
@@ -1487,25 +2034,30 @@ async function loadCommand() {
         const critical =
             hotspots.filter(
                 item =>
-                    item.level === "Critical"
+                    item.level ===
+                    "Critical"
             ).length;
 
 
         const resolved =
             reports.filter(
                 item =>
-                    item.status === "Resolved"
+                    item.status ===
+                    "Resolved"
             ).length;
 
 
         const pending =
             reports.filter(
                 item =>
-                    item.status !== "Resolved"
+                    item.status !==
+                    "Resolved"
             ).length;
 
 
-        if ($("#kpiTotal")) {
+        if (
+            $("#kpiTotal")
+        ) {
 
             $("#kpiTotal")
                 .textContent =
@@ -1514,7 +2066,9 @@ async function loadCommand() {
         }
 
 
-        if ($("#kpiActive")) {
+        if (
+            $("#kpiActive")
+        ) {
 
             $("#kpiActive")
                 .textContent =
@@ -1523,7 +2077,9 @@ async function loadCommand() {
         }
 
 
-        if ($("#kpiCritical")) {
+        if (
+            $("#kpiCritical")
+        ) {
 
             $("#kpiCritical")
                 .textContent =
@@ -1532,7 +2088,9 @@ async function loadCommand() {
         }
 
 
-        if ($("#kpiResolved")) {
+        if (
+            $("#kpiResolved")
+        ) {
 
             $("#kpiResolved")
                 .textContent =
@@ -1541,7 +2099,9 @@ async function loadCommand() {
         }
 
 
-        if ($("#queueCount")) {
+        if (
+            $("#queueCount")
+        ) {
 
             $("#queueCount")
                 .textContent =
@@ -1582,9 +2142,9 @@ async function loadCommand() {
 }
 
 
-/* =====================================
+/* =====================================================
    PRIORITY BARS
-===================================== */
+===================================================== */
 
 function renderPriorityBars(
     hotspots
@@ -1595,24 +2155,34 @@ function renderPriorityBars(
 
 
     if (!container) {
+
         return;
+
     }
 
 
     const maxScore =
         Math.max(
+
             ...hotspots.map(
                 item =>
                     item.score
             ),
+
             1
+
         );
 
 
     container.innerHTML =
+
         hotspots
-            .slice(0, 6)
+            .slice(
+                0,
+                6
+            )
             .map(
+
                 hotspot => `
 
                     <div
@@ -1663,15 +2233,17 @@ function renderPriorityBars(
                     </div>
 
                 `
+
             )
+
             .join("");
 
 }
 
 
-/* =====================================
+/* =====================================================
    RECENT REPORTS
-===================================== */
+===================================================== */
 
 function renderRecentReports(
     reports
@@ -1682,14 +2254,23 @@ function renderRecentReports(
 
 
     if (!container) {
+
         return;
+
     }
 
 
     container.innerHTML =
+
         reports
-            .slice(0, 7)
+
+            .slice(
+                0,
+                7
+            )
+
             .map(
+
                 report => `
 
                     <div
@@ -1727,15 +2308,17 @@ function renderRecentReports(
                     </div>
 
                 `
+
             )
+
             .join("");
 
 }
 
 
-/* =====================================
+/* =====================================================
    RESPONSE QUEUE
-===================================== */
+===================================================== */
 
 function renderResponseQueue(
     reports
@@ -1746,22 +2329,53 @@ function renderResponseQueue(
 
 
     if (!container) {
+
         return;
+
     }
 
 
-    const pendingReports =
-        reports
-            .filter(
-                report =>
-                    report.status !== "Resolved"
-            )
-            .slice(0, 8);
+    const pending =
+        reports.filter(
+
+            report =>
+                report.status !==
+                "Resolved"
+
+        );
+
+
+    if (
+        pending.length ===
+        0
+    ) {
+
+        container.innerHTML = `
+
+            <div
+                class="empty-queue"
+            >
+
+                ✓ All reports are resolved
+
+            </div>
+
+        `;
+
+
+        return;
+
+    }
 
 
     const rows =
-        pendingReports
+        pending
+            .slice(
+                0,
+                10
+            )
             .map(
+
                 report => `
 
                     <div
@@ -1769,23 +2383,17 @@ function renderResponseQueue(
                     >
 
                         <b>
-
                             ${report.id}
-
                         </b>
 
 
                         <span>
-
                             ${report.waste_type}
-
                         </span>
 
 
                         <span>
-
                             ${report.severity}
-
                         </span>
 
 
@@ -1809,26 +2417,9 @@ function renderResponseQueue(
                     </div>
 
                 `
+
             )
             .join("");
-
-
-    const emptyMessage =
-        pendingReports.length === 0
-
-            ? `
-
-                <div
-                    class="empty-queue"
-                >
-
-                    ✓ All reports are resolved
-
-                </div>
-
-              `
-
-            : "";
 
 
     container.innerHTML = `
@@ -1841,16 +2432,19 @@ function renderResponseQueue(
                 REPORT
             </span>
 
+
             <span>
                 TYPE
             </span>
+
 
             <span>
                 SEVERITY
             </span>
 
+
             <span>
-                STATUS
+                ACTION
             </span>
 
         </div>
@@ -1858,20 +2452,30 @@ function renderResponseQueue(
 
         ${rows}
 
-        ${emptyMessage}
-
     `;
 
 }
 
 
-/* =====================================
+/* =====================================================
    RESOLVE REPORT
-===================================== */
+===================================================== */
 
 async function resolveReport(
     reportId
 ) {
+
+
+    if (!isAdmin) {
+
+        showToast(
+            "Only the administrator can resolve reports."
+        );
+
+        return;
+
+    }
+
 
     const formData =
         new FormData();
@@ -1887,11 +2491,19 @@ async function resolveReport(
 
         const response =
             await fetch(
+
                 `/api/reports/${reportId}`,
+
                 {
-                    method: "PATCH",
-                    body: formData
+
+                    method:
+                        "PATCH",
+
+                    body:
+                        formData
+
                 }
+
             );
 
 
@@ -1902,29 +2514,24 @@ async function resolveReport(
         if (!response.ok) {
 
             throw new Error(
-                data.error ||
+
                 data.detail ||
-                "Unable to update report."
+                data.error ||
+                "Unable to resolve report."
+
             );
 
         }
 
 
         showToast(
-            `${reportId} marked as resolved.`
+            `${reportId} marked as Resolved.`
         );
 
 
         await loadCommand();
 
         await loadHome();
-
-
-        if (map) {
-
-            await loadMap();
-
-        }
 
     }
     catch (error) {
@@ -1944,9 +2551,9 @@ async function resolveReport(
 }
 
 
-/* =====================================
+/* =====================================================
    TOAST
-===================================== */
+===================================================== */
 
 function showToast(
     message
@@ -1957,7 +2564,9 @@ function showToast(
 
 
     if (!toast) {
+
         return;
+
     }
 
 
@@ -1977,6 +2586,7 @@ function showToast(
 
     showToast.timer =
         setTimeout(
+
             () => {
 
                 toast.classList.remove(
@@ -1984,7 +2594,9 @@ function showToast(
                 );
 
             },
+
             2200
+
         );
 
 }

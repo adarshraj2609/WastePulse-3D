@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
@@ -15,6 +14,8 @@
         WastePulse — Civic Intelligence
     </title>
 
+
+    <!-- Google Fonts -->
 
     <link
         rel="preconnect"
@@ -33,16 +34,444 @@
     >
 
 
+    <!-- Leaflet -->
+
     <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
     >
 
 
+    <!-- Main CSS -->
+
     <link
         rel="stylesheet"
         href="/static/style.css"
     >
+
+
+    <!-- Admin Styles -->
+
+    <style>
+
+        .hidden {
+            display: none !important;
+        }
+
+
+        /* =========================================
+           ADMIN LOGIN MODAL
+        ========================================= */
+
+        .admin-modal {
+
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 9999;
+
+            display: grid;
+
+            place-items: center;
+
+            padding: 20px;
+
+            background:
+                rgba(0, 0, 0, 0.78);
+
+            backdrop-filter:
+                blur(18px);
+
+        }
+
+
+        .admin-box {
+
+            width: min(
+                430px,
+                100%
+            );
+
+            padding: 32px;
+
+            border-radius: 24px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    #10281b,
+                    #06110b
+                );
+
+            border:
+                1px solid
+                rgba(155, 231, 173, 0.18);
+
+            box-shadow:
+                0 40px 120px
+                rgba(0, 0, 0, 0.65);
+
+            position: relative;
+
+        }
+
+
+        .admin-box h2 {
+
+            margin:
+                10px 0 8px;
+
+            font:
+                600 32px
+                "Space Grotesk";
+
+        }
+
+
+        .admin-box p {
+
+            color:
+                #789086;
+
+            font-size:
+                12px;
+
+            line-height:
+                1.7;
+
+            margin-bottom:
+                24px;
+
+        }
+
+
+        .admin-box input {
+
+            width: 100%;
+
+            padding: 14px;
+
+            margin-bottom: 12px;
+
+            border:
+                1px solid
+                rgba(155, 231, 173, 0.14);
+
+            border-radius:
+                12px;
+
+            background:
+                #07150f;
+
+            color:
+                #ffffff;
+
+            outline:
+                none;
+
+        }
+
+
+        .admin-box input:focus {
+
+            border-color:
+                rgba(155, 231, 173, 0.45);
+
+            box-shadow:
+                0 0 0 4px
+                rgba(155, 231, 173, 0.06);
+
+        }
+
+
+        .admin-close {
+
+            position:
+                absolute;
+
+            top:
+                15px;
+
+            right:
+                15px;
+
+            width:
+                34px;
+
+            height:
+                34px;
+
+            border-radius:
+                10px;
+
+            border:
+                1px solid
+                rgba(255,255,255,0.10);
+
+            background:
+                rgba(255,255,255,0.04);
+
+            color:
+                #ffffff;
+
+            cursor:
+                pointer;
+
+            font-size:
+                20px;
+
+        }
+
+
+        .admin-close:hover {
+
+            background:
+                rgba(255,255,255,0.09);
+
+        }
+
+
+        #adminLoginMessage {
+
+            min-height:
+                20px;
+
+            margin-top:
+                12px;
+
+            color:
+                #ff8c8c;
+
+            font-size:
+                11px;
+
+        }
+
+
+        /* =========================================
+           ADMIN STATUS
+        ========================================= */
+
+        .admin-user-bar {
+
+            display:
+                flex;
+
+            align-items:
+                center;
+
+            gap:
+                8px;
+
+        }
+
+
+        .admin-status {
+
+            display:
+                inline-flex;
+
+            align-items:
+                center;
+
+            gap:
+                6px;
+
+            padding:
+                7px 10px;
+
+            border:
+                1px solid
+                rgba(155,231,173,0.16);
+
+            border-radius:
+                999px;
+
+            background:
+                rgba(155,231,173,0.05);
+
+            color:
+                #9be7ad;
+
+            font-size:
+                8px;
+
+            letter-spacing:
+                1px;
+
+        }
+
+
+        .admin-status i {
+
+            width:
+                6px;
+
+            height:
+                6px;
+
+            border-radius:
+                50%;
+
+            background:
+                #9be7ad;
+
+            box-shadow:
+                0 0 10px
+                #9be7ad;
+
+        }
+
+
+        /* =========================================
+           LOGOUT
+        ========================================= */
+
+        .logout-btn {
+
+            border:
+                1px solid
+                rgba(255,255,255,0.10);
+
+            background:
+                rgba(255,255,255,0.04);
+
+            color:
+                #9aaea1;
+
+            border-radius:
+                9px;
+
+            padding:
+                7px 9px;
+
+            font-size:
+                8px;
+
+            cursor:
+                pointer;
+
+        }
+
+
+        .logout-btn:hover {
+
+            color:
+                #ffffff;
+
+            background:
+                rgba(255,255,255,0.08);
+
+        }
+
+
+        /* =========================================
+           RESOLVE BUTTON
+        ========================================= */
+
+        .resolve-btn {
+
+            border:
+                1px solid
+                rgba(155,231,173,0.25);
+
+            background:
+                rgba(155,231,173,0.09);
+
+            color:
+                #9be7ad;
+
+            border-radius:
+                8px;
+
+            padding:
+                7px 11px;
+
+            font-size:
+                8px;
+
+            font-weight:
+                700;
+
+            cursor:
+                pointer;
+
+            transition:
+                0.2s;
+
+        }
+
+
+        .resolve-btn:hover {
+
+            background:
+                #9be7ad;
+
+            color:
+                #07150f;
+
+            transform:
+                translateY(-1px);
+
+        }
+
+
+        .empty-queue {
+
+            padding:
+                30px 15px;
+
+            text-align:
+                center;
+
+            color:
+                #9be7ad;
+
+            font-size:
+                11px;
+
+        }
+
+
+        /* =========================================
+           MOBILE ADMIN
+        ========================================= */
+
+        @media (max-width: 600px) {
+
+            .admin-user-bar {
+
+                gap:
+                    5px;
+
+            }
+
+
+            .admin-status {
+
+                padding:
+                    6px 8px;
+
+                font-size:
+                    7px;
+
+            }
+
+
+            .logout-btn {
+
+                padding:
+                    6px 8px;
+
+                font-size:
+                    7px;
+
+            }
+
+        }
+
+    </style>
 
 </head>
 
@@ -50,16 +479,31 @@
 <body>
 
 
+    <!-- =====================================================
+         CURSOR
+    ====================================================== -->
+
     <div class="cursor-glow"></div>
 
 
-    <div id="toast" class="toast"></div>
+    <!-- =====================================================
+         TOAST
+    ====================================================== -->
+
+    <div
+        id="toast"
+        class="toast"
+    ></div>
 
 
-    <!-- ================= HEADER ================= -->
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
 
     <header class="topbar">
 
+
+        <!-- BRAND -->
 
         <a
             href="#"
@@ -87,40 +531,76 @@
         </a>
 
 
+
+        <!-- NAVIGATION -->
+
         <nav class="nav">
+
+
+            <!-- PUBLIC -->
 
             <button
                 class="nav-link active"
                 data-page="home"
+                type="button"
             >
+
                 Overview
+
             </button>
+
+
+            <!-- PUBLIC -->
 
             <button
                 class="nav-link"
                 data-page="report"
+                type="button"
             >
+
                 Report
+
             </button>
+
+
+            <!-- PUBLIC -->
 
             <button
                 class="nav-link"
                 data-page="hotspots"
+                type="button"
             >
+
                 Hotspots
+
             </button>
+
+
+            <!-- ADMIN ONLY -->
 
             <button
                 class="nav-link"
+                id="commandNav"
                 data-page="command"
+                type="button"
+                style="display:none;"
             >
+
                 Command
+
             </button>
+
 
         </nav>
 
 
+
+        <!-- HEADER RIGHT -->
+
         <div class="top-right">
+
+
+            <!-- LIVE -->
 
             <span class="live">
 
@@ -131,12 +611,72 @@
             </span>
 
 
+            <!-- =========================================
+                 ADMIN LOGIN
+            ========================================== -->
+
+            <button
+                id="adminLoginBtn"
+                class="round-btn"
+                title="Admin Login"
+                type="button"
+            >
+
+                🔐
+
+            </button>
+
+
+
+            <!-- =========================================
+                 ADMIN STATUS
+            ========================================== -->
+
+            <div
+                id="adminUserBar"
+                class="admin-user-bar"
+                style="display:none;"
+            >
+
+
+                <span
+                    class="admin-status"
+                >
+
+                    <i></i>
+
+                    ADMIN
+
+                </span>
+
+
+                <button
+                    id="logoutBtn"
+                    class="logout-btn"
+                    type="button"
+                >
+
+                    Logout
+
+                </button>
+
+
+            </div>
+
+
+
+            <!-- THEME -->
+
             <button
                 id="modeBtn"
                 class="round-btn"
+                type="button"
             >
+
                 ✦
+
             </button>
+
 
         </div>
 
@@ -145,10 +685,17 @@
 
 
 
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
     <main>
 
 
-        <!-- ================= HOME ================= -->
+
+        <!-- =================================================
+             HOME
+        ================================================== -->
 
         <section
             id="home"
@@ -196,6 +743,7 @@
                         <button
                             class="btn primary"
                             data-page="report"
+                            type="button"
                         >
 
                             Report a hotspot
@@ -210,6 +758,7 @@
                         <button
                             class="btn ghost"
                             data-page="hotspots"
+                            type="button"
                         >
 
                             Explore map
@@ -220,12 +769,16 @@
                     </div>
 
 
+                    <!-- PUBLIC STATS -->
+
                     <div class="microstats">
 
 
                         <div>
 
-                            <b id="heroTotal">
+                            <b
+                                id="heroTotal"
+                            >
                                 --
                             </b>
 
@@ -238,7 +791,9 @@
 
                         <div>
 
-                            <b id="heroActive">
+                            <b
+                                id="heroActive"
+                            >
                                 --
                             </b>
 
@@ -251,7 +806,9 @@
 
                         <div>
 
-                            <b id="heroCritical">
+                            <b
+                                id="heroCritical"
+                            >
                                 --
                             </b>
 
@@ -269,34 +826,49 @@
 
 
 
-                <!-- ============ 3D VISUAL ============ -->
+                <!-- =================================================
+                     3D VISUAL
+                ================================================== -->
 
                 <div class="hero-visual">
 
 
-                    <div class="visual-label top-left">
+                    <div
+                        class="visual-label top-left"
+                    >
 
                         CITY / LIVE
 
                     </div>
 
 
-                    <div class="visual-label bottom-right">
+                    <div
+                        class="visual-label bottom-right"
+                    >
 
                         HOTSPOT FIELD
 
                     </div>
 
 
-                    <div id="globe"></div>
+                    <div
+                        id="globe"
+                    ></div>
 
 
-                    <div class="orbital-ring ring-1"></div>
+                    <div
+                        class="orbital-ring ring-1"
+                    ></div>
 
-                    <div class="orbital-ring ring-2"></div>
+
+                    <div
+                        class="orbital-ring ring-2"
+                    ></div>
 
 
-                    <div class="node node-1">
+                    <div
+                        class="node node-1"
+                    >
 
                         <b>
                             17
@@ -309,7 +881,9 @@
                     </div>
 
 
-                    <div class="node node-2">
+                    <div
+                        class="node node-2"
+                    >
 
                         <b>
                             92
@@ -322,7 +896,9 @@
                     </div>
 
 
-                    <div class="node node-3">
+                    <div
+                        class="node node-3"
+                    >
 
                         <b>
                             4.2d
@@ -335,7 +911,9 @@
                     </div>
 
 
-                    <div class="health-card glass">
+                    <div
+                        class="health-card glass"
+                    >
 
 
                         <div class="health-top">
@@ -384,11 +962,14 @@
 
                 </div>
 
+
             </div>
 
 
 
-            <!-- PROCESS -->
+            <!-- =================================================
+                 HOW IT WORKS
+            ================================================== -->
 
             <div class="heading-row">
 
@@ -396,7 +977,9 @@
                 <div>
 
                     <span class="eyebrow">
+
                         HOW IT WORKS
+
                     </span>
 
 
@@ -423,15 +1006,19 @@
             <div class="process-grid">
 
 
-                <article class="process-card tilt">
+                <article
+                    class="process-card tilt"
+                >
 
                     <span>
                         01
                     </span>
 
+
                     <strong>
                         Capture
                     </strong>
+
 
                     <p>
 
@@ -441,18 +1028,24 @@
 
                     </p>
 
+
                 </article>
 
 
-                <article class="process-card tilt">
+
+                <article
+                    class="process-card tilt"
+                >
 
                     <span>
                         02
                     </span>
 
+
                     <strong>
                         Cluster
                     </strong>
+
 
                     <p>
 
@@ -461,18 +1054,24 @@
 
                     </p>
 
+
                 </article>
 
 
-                <article class="process-card tilt">
+
+                <article
+                    class="process-card tilt"
+                >
 
                     <span>
                         03
                     </span>
 
+
                     <strong>
                         Prioritize
                     </strong>
+
 
                     <p>
 
@@ -481,25 +1080,32 @@
 
                     </p>
 
+
                 </article>
 
 
-                <article class="process-card tilt">
+
+                <article
+                    class="process-card tilt"
+                >
 
                     <span>
                         04
                     </span>
 
+
                     <strong>
                         Resolve
                     </strong>
 
+
                     <p>
 
-                        Teams can monitor reports
-                        through the response lifecycle.
+                        Only the authorized administrator
+                        can mark reports as resolved.
 
                     </p>
+
 
                 </article>
 
@@ -508,7 +1114,13 @@
 
 
 
-            <div class="idea-banner">
+            <!-- =================================================
+                 IDEA
+            ================================================== -->
+
+            <div
+                class="idea-banner"
+            >
 
 
                 <span class="eyebrow">
@@ -547,7 +1159,9 @@
 
 
 
-        <!-- ================= REPORT ================= -->
+        <!-- =================================================
+             REPORT
+        ================================================== -->
 
         <section
             id="report"
@@ -557,11 +1171,15 @@
 
             <div class="heading-row">
 
+
                 <div>
 
                     <span class="eyebrow">
+
                         CITIZEN INPUT
+
                     </span>
+
 
                     <h2>
                         Report a real-world problem.
@@ -572,10 +1190,12 @@
 
                 <p>
 
-                    One submission becomes one data point
-                    in the regional waste memory.
+                    Anyone can submit a report.
+                    Only the authorized administrator
+                    can resolve it.
 
                 </p>
+
 
             </div>
 
@@ -583,6 +1203,8 @@
 
             <div class="report-layout">
 
+
+                <!-- REPORT FORM -->
 
                 <form
                     id="reportForm"
@@ -592,9 +1214,11 @@
 
                     <div class="form-title">
 
+
                         <span>
                             01
                         </span>
+
 
                         <div>
 
@@ -602,17 +1226,22 @@
                                 New report
                             </h3>
 
+
                             <small>
                                 Designed for a quick phone workflow.
                             </small>
 
                         </div>
 
+
                     </div>
 
 
 
+                    <!-- PHOTO -->
+
                     <label class="field">
+
 
                         <span>
                             Waste photo
@@ -630,7 +1259,9 @@
                             >
 
 
-                            <div class="upload-icon">
+                            <div
+                                class="upload-icon"
+                            >
                                 ＋
                             </div>
 
@@ -652,7 +1283,7 @@
 
                                 <img
                                     id="previewImage"
-                                    alt="Preview"
+                                    alt="Waste image preview"
                                 >
 
                             </div>
@@ -660,14 +1291,18 @@
 
                         </div>
 
+
                     </label>
 
 
+
+                    <!-- TYPE + SEVERITY -->
 
                     <div class="two">
 
 
                         <label class="field">
+
 
                             <span>
                                 Waste type
@@ -683,33 +1318,41 @@
                                     Mixed
                                 </option>
 
+
                                 <option>
                                     Plastic
                                 </option>
+
 
                                 <option>
                                     Organic
                                 </option>
 
+
                                 <option>
                                     Construction
                                 </option>
+
 
                                 <option>
                                     Overflowing Bin
                                 </option>
 
+
                                 <option>
                                     Garbage Burning
                                 </option>
 
+
                             </select>
+
 
                         </label>
 
 
 
                         <label class="field">
+
 
                             <span>
                                 Severity
@@ -725,15 +1368,19 @@
                                     Low
                                 </option>
 
+
                                 <option>
                                     Medium
                                 </option>
+
 
                                 <option>
                                     High
                                 </option>
 
+
                             </select>
+
 
                         </label>
 
@@ -742,32 +1389,43 @@
 
 
 
-                    <div class="location-card">
+                    <!-- LOCATION -->
+
+                    <div
+                        class="location-card"
+                    >
 
 
                         <div>
 
-                            <span class="pin">
+
+                            <span
+                                class="pin"
+                            >
                                 ⌖
                             </span>
 
 
                             <div>
 
+
                                 <b>
                                     Location
                                 </b>
 
 
-                                <small id="locationText">
-
+                                <small
+                                    id="locationText"
+                                >
                                     Demo coordinates loaded
-
                                 </small>
+
 
                             </div>
 
+
                         </div>
+
 
 
                         <button
@@ -785,10 +1443,13 @@
 
 
 
+                    <!-- LAT LONG -->
+
                     <div class="two">
 
 
                         <label class="field">
+
 
                             <span>
                                 Latitude
@@ -804,11 +1465,13 @@
                                 required
                             >
 
+
                         </label>
 
 
 
                         <label class="field">
+
 
                             <span>
                                 Longitude
@@ -823,6 +1486,7 @@
                                 value="88.3639"
                                 required
                             >
+
 
                         </label>
 
@@ -855,22 +1519,36 @@
 
 
 
-                <!-- 3D REPORT VISUAL -->
+                <!-- REPORT VISUAL -->
 
-                <div class="report-visual">
-
-
-                    <div class="scan-card">
-
-
-                        <div class="grid-plane"></div>
-
-                        <div class="scan-circle"></div>
-
-                        <div class="scan-core"></div>
+                <div
+                    class="report-visual"
+                >
 
 
-                        <div class="scan-copy">
+                    <div
+                        class="scan-card"
+                    >
+
+
+                        <div
+                            class="grid-plane"
+                        ></div>
+
+
+                        <div
+                            class="scan-circle"
+                        ></div>
+
+
+                        <div
+                            class="scan-core"
+                        ></div>
+
+
+                        <div
+                            class="scan-copy"
+                        >
 
 
                             <span>
@@ -894,44 +1572,56 @@
                     </div>
 
 
-                    <div class="mini-panels">
+
+                    <div
+                        class="mini-panels"
+                    >
 
 
                         <div>
+
 
                             <span>
                                 INPUT
                             </span>
 
+
                             <b>
                                 PHOTO + GPS
                             </b>
+
 
                         </div>
 
 
                         <div>
+
 
                             <span>
                                 PROCESS
                             </span>
 
+
                             <b>
                                 CLUSTER + SCORE
                             </b>
+
 
                         </div>
 
 
                         <div>
 
+
                             <span>
                                 OUTPUT
                             </span>
 
+
                             <b>
                                 HOTSPOT MEMORY
                             </b>
+
 
                         </div>
 
@@ -949,7 +1639,9 @@
 
 
 
-        <!-- ================= HOTSPOTS ================= -->
+        <!-- =================================================
+             HOTSPOTS
+        ================================================== -->
 
         <section
             id="hotspots"
@@ -962,22 +1654,26 @@
 
                 <div>
 
-                    <span class="eyebrow">
+
+                    <span
+                        class="eyebrow"
+                    >
                         SPATIAL INTELLIGENCE
                     </span>
+
 
                     <h2>
                         The city has a memory.
                     </h2>
+
 
                 </div>
 
 
                 <p>
 
-                    Click a hotspot to inspect
-                    its report density and
-                    unresolved load.
+                    Explore recurring waste activity
+                    without private administrator controls.
 
                 </p>
 
@@ -989,42 +1685,70 @@
             <div class="hot-layout">
 
 
-                <div class="map-card glass">
+                <!-- MAP -->
+
+                <div
+                    class="map-card glass"
+                >
 
 
-                    <div class="map-head">
+                    <div
+                        class="map-head"
+                    >
 
 
                         <span>
 
-                            <i class="live-dot"></i>
+
+                            <i
+                                class="live-dot"
+                            ></i>
+
 
                             Regional activity map
+
 
                         </span>
 
 
-                        <div class="legend">
+                        <div
+                            class="legend"
+                        >
 
 
                             <small>
+
                                 <i class="l"></i>
+
                                 Low
+
                             </small>
 
+
                             <small>
+
                                 <i class="m"></i>
+
                                 Moderate
+
                             </small>
 
+
                             <small>
+
                                 <i class="h"></i>
+
                                 High
+
                             </small>
 
+
                             <small>
+
                                 <i class="c"></i>
+
                                 Critical
+
                             </small>
 
 
@@ -1034,28 +1758,41 @@
                     </div>
 
 
-                    <div id="leafletMap"></div>
+                    <div
+                        id="leafletMap"
+                    ></div>
 
 
                 </div>
 
 
 
-                <aside class="hot-sidebar glass">
+                <!-- HOTSPOT SIDEBAR -->
+
+                <aside
+                    class="hot-sidebar glass"
+                >
 
 
-                    <div class="side-title">
+                    <div
+                        class="side-title"
+                    >
 
 
                         <div>
 
-                            <span class="eyebrow">
+
+                            <span
+                                class="eyebrow"
+                            >
                                 PRIORITY FEED
                             </span>
+
 
                             <h3>
                                 Recurring zones
                             </h3>
+
 
                         </div>
 
@@ -1063,6 +1800,7 @@
                         <button
                             id="refreshHotspots"
                             class="round-btn"
+                            type="button"
                         >
                             ↻
                         </button>
@@ -1071,7 +1809,9 @@
                     </div>
 
 
-                    <div id="hotspotList"></div>
+                    <div
+                        id="hotspotList"
+                    ></div>
 
 
                 </aside>
@@ -1084,7 +1824,10 @@
 
 
 
-        <!-- ================= COMMAND ================= -->
+        <!-- =================================================
+             COMMAND CENTER
+             ONLY ADMIN
+        ================================================== -->
 
         <section
             id="command"
@@ -1092,103 +1835,151 @@
         >
 
 
-            <div class="heading-row">
+            <div
+                class="heading-row"
+            >
 
 
                 <div>
 
-                    <span class="eyebrow">
-                        MUNICIPAL OPERATIONS
+
+                    <span
+                        class="eyebrow"
+                    >
+                        PRIVATE MUNICIPAL OPERATIONS
                     </span>
+
 
                     <h2>
                         Command center.
                     </h2>
 
+
                 </div>
 
 
-                <p>
+                <span
+                    class="admin-status"
+                >
 
-                    Reports, recurring zones
-                    and response status
-                    in one screen.
+                    <i></i>
 
-                </p>
+                    ADMIN ACCESS
+
+                </span>
 
 
             </div>
 
 
 
-            <div class="kpis">
+            <!-- KPI -->
+
+            <div
+                class="kpis"
+            >
 
 
-                <div class="kpi tilt">
+                <div
+                    class="kpi tilt"
+                >
+
 
                     <span>
                         Total reports
                     </span>
 
-                    <b id="kpiTotal">
+
+                    <b
+                        id="kpiTotal"
+                    >
                         --
                     </b>
+
 
                     <small>
                         all records
                     </small>
 
+
                 </div>
 
 
-                <div class="kpi tilt">
+
+                <div
+                    class="kpi tilt"
+                >
+
 
                     <span>
                         Active zones
                     </span>
 
-                    <b id="kpiActive">
+
+                    <b
+                        id="kpiActive"
+                    >
                         --
                     </b>
+
 
                     <small>
                         unresolved locations
                     </small>
 
+
                 </div>
 
 
-                <div class="kpi tilt">
+
+                <div
+                    class="kpi tilt"
+                >
+
 
                     <span>
                         Critical zones
                     </span>
 
-                    <b id="kpiCritical">
+
+                    <b
+                        id="kpiCritical"
+                    >
                         --
                     </b>
+
 
                     <small>
                         priority ≥ 80
                     </small>
 
+
                 </div>
 
 
-                <div class="kpi tilt">
+
+                <div
+                    class="kpi tilt"
+                >
+
 
                     <span>
                         Resolved
                     </span>
 
-                    <b id="kpiResolved">
+
+                    <b
+                        id="kpiResolved"
+                    >
                         --
                     </b>
+
 
                     <small>
                         closed reports
                     </small>
 
+
                 </div>
 
 
@@ -1196,49 +1987,79 @@
 
 
 
-            <div class="command-grid">
+            <!-- DASHBOARD -->
+
+            <div
+                class="command-grid"
+            >
 
 
-                <div class="panel glass">
+                <!-- PRIORITY -->
+
+                <div
+                    class="panel glass"
+                >
 
 
-                    <div class="panel-title">
+                    <div
+                        class="panel-title"
+                    >
 
-                        <span class="eyebrow">
+
+                        <span
+                            class="eyebrow"
+                        >
                             01 / PRIORITY
                         </span>
+
 
                         <h3>
                             Hotspot intensity
                         </h3>
 
+
                     </div>
 
 
-                    <div id="bars"></div>
+                    <div
+                        id="bars"
+                    ></div>
 
 
                 </div>
 
 
 
-                <div class="panel glass">
+                <!-- RECENT -->
+
+                <div
+                    class="panel glass"
+                >
 
 
-                    <div class="panel-title">
+                    <div
+                        class="panel-title"
+                    >
 
-                        <span class="eyebrow">
+
+                        <span
+                            class="eyebrow"
+                        >
                             02 / RECENT
                         </span>
+
 
                         <h3>
                             Report stream
                         </h3>
 
+
                     </div>
 
 
-                    <div id="recent"></div>
+                    <div
+                        id="recent"
+                    ></div>
 
 
                 </div>
@@ -1248,21 +2069,32 @@
 
 
 
-            <div class="panel glass">
+            <!-- RESPONSE QUEUE -->
+
+            <div
+                class="panel glass"
+            >
 
 
-                <div class="panel-title action-title">
+                <div
+                    class="panel-title action-title"
+                >
 
 
                     <div>
 
-                        <span class="eyebrow">
+
+                        <span
+                            class="eyebrow"
+                        >
                             03 / ACTIONS
                         </span>
+
 
                         <h3>
                             Response queue
                         </h3>
+
 
                     </div>
 
@@ -1278,7 +2110,9 @@
                 </div>
 
 
-                <div id="actions"></div>
+                <div
+                    id="actions"
+                ></div>
 
 
             </div>
@@ -1291,34 +2125,149 @@
 
 
 
+    <!-- =====================================================
+         ADMIN LOGIN MODAL
+    ====================================================== -->
+
+    <div
+        id="adminModal"
+        class="admin-modal hidden"
+    >
+
+
+        <div
+            class="admin-box"
+        >
+
+
+            <button
+                id="closeAdmin"
+                class="admin-close"
+                type="button"
+            >
+                ×
+            </button>
+
+
+            <span
+                class="eyebrow"
+            >
+                PRIVATE ACCESS
+            </span>
+
+
+            <h2>
+                Admin Login
+            </h2>
+
+
+            <p>
+
+                Only the authorized administrator
+                can access report resolution controls.
+
+            </p>
+
+
+            <form
+                id="adminLoginForm"
+            >
+
+
+                <input
+                    id="adminUsername"
+                    type="text"
+                    placeholder="Admin username"
+                    autocomplete="username"
+                    required
+                >
+
+
+                <input
+                    id="adminPassword"
+                    type="password"
+                    placeholder="Admin password"
+                    autocomplete="current-password"
+                    required
+                >
+
+
+                <button
+                    class="btn primary full"
+                    type="submit"
+                >
+
+                    Login to Command
+
+                </button>
+
+
+            </form>
+
+
+            <div
+                id="adminLoginMessage"
+            ></div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
     <footer>
 
-        <span>
-            WASTEPULSE / CIVIC INTELLIGENCE PROTOTYPE
-        </span>
 
         <span>
-            Regional civic-tech UI •
-            <b id="year"></b>
+
+            WASTEPULSE /
+            CIVIC INTELLIGENCE PROTOTYPE
+
         </span>
+
+
+        <span>
+
+            Regional civic-tech UI •
+
+            <b id="year"></b>
+
+        </span>
+
 
     </footer>
 
 
 
-    <!-- THREE.JS -->
+    <!-- =====================================================
+         THREE.JS
+    ====================================================== -->
 
     <script
         src="https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js"
     ></script>
 
 
-    <!-- LEAFLET -->
+
+    <!-- =====================================================
+         LEAFLET
+    ====================================================== -->
 
     <script
         src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     ></script>
 
+
+
+    <!-- =====================================================
+         WASTEPULSE JAVASCRIPT
+    ====================================================== -->
 
     <script
         src="/static/script.js"
